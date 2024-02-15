@@ -1,0 +1,13 @@
+if [ -z "$1" ]
+then
+	NS=$(kcn-get) 
+	if [ -z "$NS" ]
+	then
+		echo "Namespace: NOT SET"
+	else
+		echo "Namespace: $NS"
+	fi
+else
+	echo $1 > $HOME/.tmp/kubectl-namespace
+	echo "Namespace set to $(kcn-get)"
+fi

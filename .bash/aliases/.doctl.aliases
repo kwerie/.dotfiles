@@ -1,0 +1,14 @@
+function dssh {
+	if [ -z "$1" ]
+	then
+		echo "Droplet not provided"
+		return 1
+	fi
+	
+	if [ -z "$2" ]
+	then
+		doctl compute ssh $1 --ssh-user=cloudants
+	else
+		doctl compute ssh $1 ssh-user=$2
+	fi
+}

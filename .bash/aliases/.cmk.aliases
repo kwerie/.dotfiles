@@ -1,0 +1,109 @@
+function cmk-vms {
+    cmk listVirtualMachines | jq -r '.virtualmachine[] | "[\(.zonename) : \(.displayname) : \(.id) : \(.state)] [cpu:\(.cpunumber)x\(.cpuspeed)MHz] [mem: \(.memory)Mb] \(.name) [sec: \(.securitygroup[] | "\(.name) (\(.description)) <\(.id)>")] [ips: \(.nic[].ipaddress)] [template: \(.templatename) <\(.templateid)>]"'
+}
+function cmk-vms-light {
+    cmk listVirtualMachines | jq -r '.virtualmachine[] | "[\(.id)] \(.displayname) - \(.name)"'
+}
+function cmk-vms-nic {
+    cmk listVirtualMachines | jq -r '.virtualmachine[] | "[\(.id)] \(.displayname) - \(.name) [\(.nic[].ipaddress), \(.nic[].ip6address)]"'
+}
+function cmk-vms-nica {
+    cmk -p pce_ams listVirtualMachines | jq -r '.virtualmachine[] | "[\(.id)] \(.displayname) - \(.name) [\(.nic[].ipaddress), \(.nic[].ip6address)]"'
+    cmk -p pce_ams3 listVirtualMachines | jq -r '.virtualmachine[] | "[\(.id)] \(.displayname) - \(.name) [\(.nic[].ipaddress), \(.nic[].ip6address)]"'
+    cmk -p pce_haa listVirtualMachines | jq -r '.virtualmachine[] | "[\(.id)] \(.displayname) - \(.name) [\(.nic[].ipaddress), \(.nic[].ip6address)]"'
+}
+function cmk-vmsa {
+    if [ -z "$1" ]; then
+        echo "Specify VM to search for"
+        return 1
+    fi
+    echo "== ZONE AMS =="
+    cmk -p pce_ams listVirtualMachines | jq -r '.virtualmachine[] | "[\(.zonename) : \(.displayname) : \(.id) : \(.state)] [cpu:\(.cpunumber)x\(.cpuspeed)MHz] [mem: \(.memory)Mb] [ha: \(.haenable)] \(.name) [sec: \(.securitygroup[] | "\(.name) (\(.description)) <\(.id)>")] [ips: \(.nic[].ipaddress)] [template: \(.templatename) <\(.templateid)>]"' | grep -i $1
+    echo "== ZONE AMS3 =="
+    cmk -p pce_ams3 listVirtualMachines | jq -r '.virtualmachine[] | "[\(.zonename) : \(.displayname) : \(.id) : \(.state)] [cpu:\(.cpunumber)x\(.cpuspeed)MHz] [mem: \(.memory)Mb] [ha: \(.haenable)] \(.name) [sec: \(.securitygroup[] | "\(.name) (\(.description)) <\(.id)>")] [ips: \(.nic[].ipaddress)] [template: \(.templatename) <\(.templateid)>]"' | grep -i $1
+    echo "== ZONE HAA =="
+    cmk -p pce_haa listVirtualMachines | jq -r '.virtualmachine[] | "[\(.zonename) : \(.displayname) : \(.id) : \(.state)] [cpu:\(.cpunumber)x\(.cpuspeed)MHz] [mem: \(.memory)Mb] [ha: \(.haenable)] \(.name) [sec: \(.securitygroup[] | "\(.name) (\(.description)) <\(.id)>")] [ips: \(.nic[].ipaddress)] [template: \(.templatename) <\(.templateid)>]"' | grep -i $1
+}
+function cmk-vms-apache-require-ip-blocks {
+    cmk -p pce_ams list virtualmachines | jq -r '.virtualmachine[] | "\t\t\t# \(.displayname)\n\t\t\tRequire ip \(.nic[].ipaddress)/32\n\t\t\t# \(.displayname)\n\t\t\tRequire ip \(.nic[].ip6address)/128"'
+    cmk -p pce_ams3 list virtualmachines | jq -r '.virtualmachine[] | "\t\t\t# \(.displayname)\n\t\t\tRequire ip \(.nic[].ipaddress)/32\n\t\t\t# \(.displayname)\n\t\t\tRequire ip \(.nic[].ip6address)/128"'
+    cmk -p pce_haa list virtualmachines | jq -r '.virtualmachine[] | "\t\t\t# \(.displayname)\n\t\t\tRequire ip \(.nic[].ipaddress)/32\n\t\t\t# \(.displayname)\n\t\t\tRequire ip \(.nic[].ip6address)/128"'
+}
+function cmk-sas-list {
+    cmk listVirtualMachines | jq -r '.virtualmachine[] | "\(.id),\(.state),\(.displayname)"'
+}
+function cmk-sg {
+    cmk listSecurityGroups | jq -r '.securitygroup[] | "\(.name) <\(.id)> [\(.virtualmachinecount) VMs] \(.description)"'
+}
+function cmk-sg-raw {
+    if [ -z "$1" ]; then
+        echo "Specify security group name"
+        return 1
+    fi
+    cmk listSecurityGroups securitygroupname=$1
+}
+function cmk-sg-detail {
+    if [ -z "$1" ]; then
+        echo "Specify security group name"
+        return 1
+    fi
+    cmk listSecurityGroups securitygroupname="$1" | jq -r '.securitygroup[] | "\(.name) <\(.id)>: \(.description) [\(.virtualmachinecount) VMs]"'
+    cmk listSecurityGroups securitygroupname="$1" | jq -r '.securitygroup[].ingressrule[] | "IN: [cidr: \(.cidr) / group: \(.securitygroupname)] \(.startport)-\(.endport) <\(.protocol)>, rule ID: \(.ruleid)]"'
+}
+function cmk-sg-remove-all-rules {
+    if [ -z "$1" ]; then
+        echo "Specify security group name"
+        return 1
+    fi
+        cmk listSecurityGroups securitygroupname="$1" | jq -r '.securitygroup[].ingressrule[] | "cmk revoke securitygroupingress id=\(.ruleid) &"'
+}
+function cmk-vols {
+    cmk list volumes | jq -r '.volume[] | "\(.name) [\(.id)] (size: \(.size / 1024 / 1024 / 1024 | round)G, VM ID: \(.virtualmachineid))"'
+}
+function cmk-volsa {
+        if [ -z "$1" ]; then
+                echo "Specify VM to search for"
+                return 1
+        fi
+        echo "== ZONE AMS =="
+    cmk -p pce_ams list volumes | jq -r '.volume[] | "\(.name) [\(.id)] (size: \(.size / 1024 / 1024 / 1024 | round)G, VM ID: \(.virtualmachineid))"' | grep $1
+        echo "== ZONE AMS3 =="
+    cmk -p pce_ams3 list volumes | jq -r '.volume[] | "\(.name) [\(.id)] (size: \(.size / 1024 / 1024 / 1024 | round)G, VM ID: \(.virtualmachineid))"' | grep $1
+        echo "== ZONE HAA =="
+    cmk -p pce_haa list volumes | jq -r '.volume[] | "\(.name) [\(.id)] (size: \(.size / 1024 / 1024 / 1024 | round)G, VM ID: \(.virtualmachineid))"' | grep $1
+}
+function cmk-snapshots {
+    cmk list snapshots | jq -r '.snapshot[] | "\(.volumename) [\(.volumeid)] (size: \(.physicalsize / 1024 / 1024 / 1024 | round)G) (created at: \(.created))"'
+}
+function cmk-snapshots-volume {
+    if [ -z "$1" ]; then
+        echo "Specify volumeid"
+        return 1
+    fi
+    cmk list snapshots volumeid=$1 | jq -r '.snapshot[] | "\(.volumename) [\(.volumeid)] (size: \(.physicalsize / 1024 / 1024 / 1024 | round)G) (created at: \(.created))"'
+}
+function cmk-serviceofferings {
+    cmk listServiceOfferings | jq -r '.serviceoffering[] | "CPU: \(.cpunumber) | Memory: \(.memory / 1024) GB [ha: \(.offerha), id: \(.id)] [name: \(.name), desc: \(.displaytext)]"'
+}
+function cmk-zones {
+    cmk listZones | jq -r '.zone[] | "\(.name) (\(.description)) [\(.id)]"'
+}
+function cmk-templates {
+    cmk listTemplates templatefilter=featured | jq -r '.template[] | "[\(.id)] \(.name) - \(.displaytext) [os: \(.ostypename), size: \(.physicalsize/1024/1024), zone: \(.zonename), x-zone: \(.crossZones), public: \(.ispublic)]"'
+}
+function cmk-networks {
+    cmk list networks | jq -r '.network[] | "\(.name) [id: \(.id)] [\(.cidr) / \(.ip6cidr)] [deployable: \(.canusefordeploy)]"'
+}
+function cmk-diskofferings {
+    cmk listDiskofferings | jq -r '.diskoffering[] | "[id: \(.id)] \(.name) \(.provisioningtype) - \(.displaytext) [size: \(.disksize), tags: \(.tags)]"'
+}
+function cmk-stop-and-start {
+    if [ -z "$1" ]; then
+        echo "Specify virtualmachine ID"
+        return 1
+    fi
+    cmk stop virtualmachine id=$1
+    sleep 5
+    cmk start virtualmachine id=$1
+}
+alias cmk-sas="cmk-stop-and-start"

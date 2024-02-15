@@ -1,0 +1,53 @@
+#!/bin/bash
+
+alias c="clear"
+alias cl="clear; ls -l"
+alias lsa="ls -alsh --color=always"
+alias x="exit"
+alias reloadzsh="source ~/.zshrc"
+alias s3="s3cmd"
+#alias vim="nvim"
+
+gpass () {
+	LENGTH=$1 
+	if [ -z "$1" ]
+	then
+		LENGTH=64 
+	fi
+	pwgen -cny -B -1 -r \'\<\>\"\@\?\^\&\*\(\)\`\:\~\?\;\:\[\]\{\}\.\,\\\/\|\%\#\+\!\=\$\! $LENGTH
+}
+
+alias rlkp="dig +noall +answer "$@""
+alias wn1="watch -n 1 "$@""
+alias yeet="rm -rf "$@""
+#alias cat="batcat -p"
+alias bat="batcat"
+alias cpy='xclip -selection clipboard'
+
+vm-summary() {
+  CURRENTDATE=$(date +"%d-%m-%Y")
+  cmk -p pce_ams listVirtualMachines | jq -r '["VM Name", "Service offering", "Capacity"], (.virtualmachine[] | [.displayname, .serviceofferingname, .memory]) | @csv' >> vm-summary-${CURRENTDATE}.csv
+  cmk -p pce_ams3 listVirtualMachines | jq -r '(.virtualmachine[] | [.displayname, .serviceofferingname, .memory]) | @csv' >> vm-summary-${CURRENTDATE}.csv
+  cmk -p pce_haa listVirtualMachines | jq -r '(.virtualmachine[] | [.displayname, .serviceofferingname, .memory]) | @csv' >> vm-summary-${CURRENTDATE}.csv
+}
+
+vm-summary-formatted() {
+  CURRENTDATE=$(date +"%d-%m-%Y")
+  cmk -p pce_ams listVirtualMachines | jq -r '["VM Name", "Service offering", "Capacity"], (.virtualmachine[] | [.displayname, .serviceofferingname, .memory]) | @csv' >> vm-summary-${CURRENTDATE}.csv
+  cmk -p pce_ams3 listVirtualMachines | jq -r '(.virtualmachine[] | [.displayname, .serviceofferingname, .memory]) | @csv' >> vm-summary-${CURRENTDATE}.csv
+  cmk -p pce_haa listVirtualMachines | jq -r '(.virtualmachine[] | [.displayname, .serviceofferingname, .memory]) | @csv' >> vm-summary-${CURRENTDATE}.csv
+  sed -i -e 's/Agile |/Standard/g' -e 's/Stamina |/HA/g' -e 's/pcx_ha_custom/HA/g' -e 's/pcx_standard_custom/Standard/g' -e 's/pcx_starter_custom/Standard/g' vm-summary-${CURRENTDATE}.csv
+}
+
+
+#vm-summary() {
+#  CURRENTDATE=$(date +"%d-%m-%Y")
+#  cmk -p pce_ams listVirtualMachines | jq -r '["VM Name", "Service offering", "CPU #", "MEM", "HA"], (.virtualmachine[] | [.displayname, .serviceofferingname, .cpunumber, .memory, .haenable]) | @csv' >> vm-summary-${CURRENTDATE}.csv
+#  cmk -p pce_ams3 listVirtualMachines | jq -r '(.virtualmachine[] | [.displayname, .serviceofferingname, .cpunumber, .memory, .haenable]) | @csv' >> vm-summary-${CURRENTDATE}.csv
+#  cmk -p pce_haa listVirtualMachines | jq -r '(.virtualmachine[] | [.displayname, .serviceofferingname, .cpunumber, .memory, .haenable]) | @csv' >> vm-summary-${CURRENTDATE}.csv
+#}
+
+# BACKUP #
+# cmk -p pce_ams listVirtualMachines | jq -r '.virtualmachine[] | "\(.displayname),\(.cpunumber),\(.memory),\(.haenable)"' > ~/Documents/vm-summary.csv
+# cmk -p pce_ams3 listVirtualMachines | jq -r '.virtualmachine[] | "\(.displayname),\(.cpunumber),\(.memory),\(.haenable)"' >> ~/Documents/vm-summary.csv
+# cmk -p pce_haa listVirtualMachines | jq -r '.virtualmachine[] | "\(.displayname),\(.cpunumber),\(.memory),\(.haenable)"' >> ~/Documents/vm-summary.csv

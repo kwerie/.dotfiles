@@ -1,0 +1,12 @@
+#!/bin/bash
+
+alias dcu="docker compose up -d"
+alias dcs="docker compose stop"
+alias dcr="docker compose restart"
+alias dc="docker compose"
+alias d="docker"
+alias dps="docker ps --format 'table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Image}}\t{{.Ports}}'"
+alias dcl="docker compose logs -f"
+alias dive="docker run -ti --rm  -v /var/run/docker.sock:/var/run/docker.sock wagoodman/dive"
+alias trivy-scan="docker run --rm  -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image"
+

@@ -1,0 +1,367 @@
+# Namespace management
+alias kcn-set="echo $1 > $HOME/.tmp/kubectl-namespace"
+alias kcn-unset="rm $HOME/.tmp/kubectl-namespace"
+alias kcn-get="cat $HOME/.tmp/kubectl-namespace 2>/dev/null"
+alias kg="cat $HOME/.tmp/kubectl-namespace 2>/dev/null"
+
+function kcn {
+	if [ -z "$1" ]
+	then
+		NS=$(kcn-get)
+		if [ -z "$NS" ]
+		then
+			echo "Namespace: NOT SET"
+		else
+			echo "Namespace: $NS"
+		fi
+	else
+		echo $1 > $HOME/.tmp/kubectl-namespace
+		echo "Namespace set to $(kcn-get)"
+	fi
+}
+
+# Kubernetes aliases
+alias kc='kubectl'
+alias kcin='kubectl -n $(kcn-get)'
+alias kcing='kubectl -n $(kcn-get) get'
+alias kcine='kubectl -n $(kcn-get) edit'
+alias kcind='kubectl -n $(kcn-get) delete'
+alias kcindf='kubectl -n $(kcn-get) delete --force --grace-period=0'
+alias kcindr='kubectl -n $(kcn-get) describe'
+alias kcinsc='kubectl -n $(kcn-get) scale'
+alias kc-c="kubectl config get-contexts"
+alias kc-cu="kubectl config use"
+alias kcns="kubectl get ns"
+alias kci-all="kubectl get ing -A -o json | jq -r '.items[].spec.rules[].host'"
+
+function kcon {
+	echo "On cluster: $(kubectl config get-contexts | grep '*' | cut -d ' ' -f10) | Namespace: $(kcn-get)"
+}
+
+# Kubectl aliases
+function kcp {
+	kubectl get pods -n $(kcn-get) "$@"
+}
+
+function kcp-containers {
+	if [ -z "$1" ]; then
+		echo "Specify pod name"
+		return 1
+	fi
+
+	echo "Containers in $1: $(kubectl get pods -n $(kcn-get) $1 -o jsonpath='{.spec.containers[*].name}')"
+	echo "Initialization containers: $(kubectl get pods -n $(kcn-get) $1 -o jsonpath='{.spec.initContainers[*].name}')"
+}
+
+function kcp-ef {
+	kubectl get pods -n $(kcn-get) --field-selector "status.phase!=Failed" "$@"
+}
+
+function kcpd {
+	kubectl get pod -n $(kcn-get) -o yaml "$@"
+}
+
+function kcpa {
+	kubectl get pods -n $(kcn-get) "$@"
+}
+
+function kcdep {
+	kubectl get deployments -n $(kcn-get) "$@"
+}
+
+function kcdep-resources {
+	kubectl get deployments -n $(kcn-get) -o json | jq -r '.items[] | "\(.metadata.name): cpu req/lim = \(.spec.template.spec.containers[0].resources.requests.cpu)/\(.spec.template.spec.containers[0].resources.limits.cpu) | mem req/lim: \(.spec.template.spec.containers[0].resources.requests.memory)/\(.spec.template.spec.containers[0].resources.limits.memory)"'
+}
+
+function kcEdep {
+	kubectl edit deployments -n $(kcn-get) "$@"
+}
+
+function kci {
+	kubectl get ing -n $(kcn-get) "$@"
+}
+
+function kcmcrt {
+	kubectl get mcrt -n $(kcn-get) "$@"
+}
+
+function kcmcrt-status {
+	if [ -z "$1" ]; then
+		kubectl get mcrt -n $(kcn-get) -o json | jq -r '.items[] | "\(.metadata.name) - \(.status.certificateName) - \(.status.certificateStatus) - \(.status.domainStatus[].domain): \(.status.domainStatus[].status)"'
+	else
+		kubectl get mcrt -n $(kcn-get) -o json $1 | jq -r '"\(.metadata.name) - \(.status.certificateName) - \(.status.certificateStatus) - \(.status.domainStatus[].domain): \(.status.domainStatus[].status)"'
+	fi
+}
+
+function kcmcrt-status-watch {
+	if [ -z "$1" ]; then
+		watch -n 1 "kubectl get mcrt -n $(kcn-get) -o json | jq -r '.items[] | \"\(.metadata.name) - \(.status.certificateName) - \(.status.certificateStatus) - \(.status.domainStatus[].domain): \(.status.domainStatus[].status)\"'"
+	else
+		watch -n 1 "kubectl get mcrt -n $(kcn-get) -o json $1 | jq -r '\"\(.metadata.name) - \(.status.certificateName) - \(.status.certificateStatus) - \(.status.domainStatus[].domain): \(.status.domainStatus[].status)\"'"
+	fi
+}
+
+function kccert {
+	kubectl get certs -n $(kcn-get) "$@"
+}
+
+function kcpv {
+	kubectl get pv -n $(kcn-get) "$@"
+}
+
+function kcpvc {
+	kubectl get pvc -n $(kcn-get) "$@"
+}
+
+function kcsvc {
+	kubectl get services -n $(kcn-get) "$@"
+}
+
+function kcev {
+	kubectl get events -n $(kcn-get) --sort-by='{.lastTimestamp}' "$@"
+}
+
+function kcevw {
+	kubectl get events -n $(kcn-get) --sort-by='{.lastTimestamp}' --watch "$@"
+}
+
+function kcinsec {
+	if [ -z "$1" ]; then
+		echo "Specify a secret name"
+		return 1
+	fi
+
+	kcing secret $1 -o json | jq -r '.data | to_entries[] | "\(.key): \(.value | @base64d )"'
+}
+
+#function kca {
+#	RESOURCES="configmaps,limitranges,namespaces,persistentvolumeclaims,persistentvolumes,pods,secrets,serviceaccounts,services,daemonsets,deployments,replicasets,statefulsets,horizontalpodautoscalers,cronjobs,jobs,ingresses,clusterrolebindings,clusterroles,rolebindings,roles,storageclasses"
+#	kubectl get $RESOURCES -n $(kcn-get)
+#}
+
+kca () {
+	RESOURCES=$(kubectl api-resources --namespaced=true --verbs=get -o name | tr '\n' ',' | sed '$ s/,$//g') 
+	kubectl -n "$(kcn-get)" get "${RESOURCES}" "$@"
+}
+
+function kce {
+	kubectl exec -itn $(kcn-get) $1 bash
+}
+
+function kces {
+	kubectl exec -itn $(kcn-get) $1 sh
+}
+
+function kcl {
+	TAILSIZE=${2-50}
+
+	if [ -z "$3" ]; then
+		kubectl logs -n $(kcn-get) --tail=$TAILSIZE $1
+	else
+		kubectl logs -n $(kcn-get) --tail=$TAILSIZE -c $3 $1
+	fi
+}
+
+function kclt {
+	TAILSIZE=${2-50}
+
+	if [ -z "$3" ]; then
+		kubectl logs -n $(kcn-get) --follow --tail=$TAILSIZE $1
+	else
+	        kubectl logs -n $(kcn-get) --follow --tail=$TAILSIZE -c $3 $1
+	fi
+}
+
+function kcla {
+	kubectl logs -n $(kcn-get) --all-containers "$@"
+}
+
+function kclta {
+	kubectl logs -n $(kcn-get) -f --all-containers --max-log-requests=10 "$@"
+}
+
+function kctp {
+	kubectl top pods -n $(kcn-get)
+}
+
+function kctpa {
+	kubectl top pods -A
+}
+
+function kctpa-filterlow {
+	kubectl top pods -A | grep -v -e " 1m " -e " 2m " -e " 3m " -e " 4m " -e " 5m " -e " 6m " -e " 7m " -e " 8m " -e " 9m " -e " 0m "
+}
+
+function kctn {
+	kubectl top nodes
+}
+
+function kcsarb {
+	kubectl get rolebindings,clusterrolebindings -A -o custom-columns='KIND:kind,NAMESPACE:metadata.namespace,NAME:metadata.name,SERVICE_ACCOUNTS:subjects[?(@.kind=="ServiceAccount")].name'
+}
+
+# k8s management aliases
+
+function kcm-top {
+	kubectl top nodes
+}
+
+function kcm-broken-pods {
+	kubectl get pods -A --field-selector "status.phase=Failed" -o wide
+}
+
+function kcm-broken-pods-remove {
+	kubectl get pods -A --field-selector "status.phase=Failed" --template '{{range .items}}kubectl delete pod -n {{.metadata.namespace}} {{.metadata.name}} &{{"\n"}}{{end}}'
+}
+
+function kcm-broken-pods-remove-forced {
+	kubectl get pods -A --field-selector "status.phase=Failed" --template '{{range .items}}kubectl delete pod -n {{.metadata.namespace}} --force --grace-period=0 {{.metadata.name}} &{{"\n"}}{{end}}'
+}
+
+# Deprecation checks
+
+function kcd-certmanager {
+	kubectl get ingress --all-namespaces -o json | \
+	jq '.items[] | select(.metadata.annotations| to_entries | map(.key)[] | test("certmanager")) | "Ingress resource \(.metadata.namespace)/\(.metadata.name) contains old annotations: (\( .metadata.annotations | to_entries | map(.key)[] | select( . | test("certmanager") )  ))"'
+}
+
+# Check deprecations on DaemonSet (daemonsets: extensions/v1beta, apps/v1beta2 => apps/v1)
+# Check deprecations on Deployment (deployments: extensions/v1beta1, apps/v1beta1, apps/v1beta2 => apps/v1)
+# Check deprecations on ReplicaSet (replicasets: extensions/v1beta1, apps/v1beta1, apps/v1beta2 => apps/v1)
+# Check deprecations on StatefulSet (statefulsets: apps/v1beta1, apps/v1beta2 => apps/v1)
+# Check deprecations on NetworkPolicy (networkpolicies: extensions/v1beta1 => networking.k8s.io/v1)
+# Check deprecations on PodSecurityPolicy (podsecuritypolicies: extensions/v1beta1 => policy/v1beta1)
+function kcd-k8s-v1-16 {
+	kubectl get daemonsets -A -o json | \
+	jq '.items[] | select(.apiVersion| test("^(extensions/v1beta|extensions/v1beta1|apps/v1beta2)$")) | "DaemonSet resource \(.metadata.namespace)/\(.metadata.name) contains deprecated apiVersion: \(.apiVersion), please use apps/v1 instead"'
+
+	kubectl get deployments -A -o json | \
+	jq '.items[] | select(.apiVersion| test("^(extensions/v1beta1|apps/v1beta1|apps/v1beta2)$")) | "Deployment resource \(.metadata.namespace)/\(.metadata.name) contains deprecated apiVersion: \(.apiVersion), please use apps/v1 instead"'
+
+	kubectl get replicasets -A -o json | \
+	jq '.items[] | select(.apiVersion| test("^(extensions/v1beta1|apps/v1beta1|apps/v1beta2)$")) | "ReplicaSet resource \(.metadata.namespace)/\(.metadata.name) contains deprecated apiVersion: \(.apiVersion), please use apps/v1 instead"'
+
+	kubectl get statefulsets -A -o json | \
+	jq '.items[] | select(.apiVersion| test("^(apps/v1beta1|apps/v1beta2)$")) | "StatefulSet resource \(.metadata.namespace)/\(.metadata.name) contains deprecated apiVersion: \(.apiVersion), please use apps/v1 instead"'
+
+	kubectl get networkpolicies -A -o json | \
+	jq '.items[] | select(.apiVersion| test("^(extensions/v1beta1)$")) | "NetworkPolicy resource \(.metadata.namespace)/\(.metadata.name) contains deprecated apiVersion: \(.apiVersion), please use networking.k8s.io/v1 instead"'
+
+	kubectl get podsecuritypolicies -A -o json | \
+	jq '.items[] | select(.apiVersion| test("^(extensions/v1beta1)$")) | "PodSecurityPolicy resource \(.metadata.namespace)/\(.metadata.name) contains deprecated apiVersion: \(.apiVersion), please use policy/v1beta1 instead"'
+}
+
+function kcd-k8s-v1-22 {
+	kubectl get csidriver,csinode,storageclass,volumeattachment -A -o json | \
+	jq '.items[] | select(.apiVersion| test("^storage.k8s.io/v1beta1$")) | "Resource \(.metadata.namespace)/\(.metadata.name) contains deprecated apiVersion: \(.apiVersion), please use alternative (see: https://kubernetes.io/docs/reference/using-api/deprecation-guide/#v1-22)"'
+
+	kubectl get priorityclass -A -o json | \
+	jq '.items[] | select(.apiVersion| test("^scheduling.k8s.io/v1beta1$")) | "PriorityClass resource \(.metadata.namespace)/\(.metadata.name) contains deprecated apiVersion: \(.apiVersion), please use alternative (see: https://kubernetes.io/docs/reference/using-api/deprecation-guide/#v1-22)"'
+
+	kubectl get clusterrole,clusterrolebinding,role,rolebinding -A -o json | \
+	jq '.items[] | select(.apiVersion| test("^rbac.authorization.k8s.io/v1beta1$")) | "Resource \(.metadata.namespace)/\(.metadata.name) contains deprecated apiVersion: \(.apiVersion), please use alternative (see: https://kubernetes.io/docs/reference/using-api/deprecation-guide/#v1-22)"'
+
+	kubectl get ingressclass -A -o json | \
+	jq '.items[] | select(.apiVersion| test("^networking.k8s.io/v1beta1$")) | "IngressClass resource \(.metadata.namespace)/\(.metadata.name) contains deprecated apiVersion: \(.apiVersion), please use alternative (see: https://kubernetes.io/docs/reference/using-api/deprecation-guide/#v1-22)"'
+
+	kubectl get ingress -A -o json | \
+	jq '.items[] | select(.apiVersion| test("^(extensions/v1beta1|networking.k8s.io/v1beta1)$")) | "Ingress resource \(.metadata.namespace)/\(.metadata.name) contains deprecated apiVersion: \(.apiVersion), please use alternative (see: https://kubernetes.io/docs/reference/using-api/deprecation-guide/#v1-22)"'
+
+	kubectl get lease -A -o json | \
+	jq '.items[] | select(.apiVersion| test("^coordination.k8s.io/v1beta1$")) | "Lease resource \(.metadata.namespace)/\(.metdata.name) contains deprecated apiVersion: \(.apiVersion), please use alternative (see: https://kubernetes.io/docs/reference/using-api/deprecation-guide/#v1-22)"'
+
+	kubectl get certificatesigningrequest -A -o json | \
+	jq '.items[] | select(.apiVersion| test("^certificates.k8s.io/v1beta1$")) | "CertificateSigningRequest \(.metadata.namespace)/\(.metadata.name) contains deprecated apiVersion: \(.apiVersion), please use alternative (see: https://kubernetes.io/docs/reference/using-api/deprecation-guide/#v1-22)"'
+
+	kubectl get localsubjectaccessreview,selfsubjectaccessreview,subjectaccessreview -A -o json | \
+	jq '.items[] | select(.apiVersion| test("^authorization.k8s.io/v1beta1$")) | "Resource \(.metadata.namespace)/\(.metadata.name) contains deprecated apiVersion: \(.apiVersion), please use alternative (see: https://kubernetes.io/docs/reference/using-api/deprecation-guide/#v1-22)"'
+
+	kubectl get tokenreview -A -o json | \
+	jq '.items[] | select(.apiVersion| test("^authentication.k8s.io/v1beta1$")) | "Resource \(.metadata.namespace)/\(.metadata.name) contains deprecated apiVersion: \(.apiVersion), please use alternative (see: https://kubernetes.io/docs/reference/using-api/deprecation-guide/#v1-22)"'
+
+	kubectl get apiservice -A -o json | \
+	jq '.items[] | select(.apiVersion| test("^apiregistration.k8s.io/v1beta1$")) | "Resource \(.metadata.namespace)/\(.metadata.name) contains deprecated apiVersion: \(.apiVersion), please use alternative (see: https://kubernetes.io/docs/reference/using-api/deprecation-guide/#v1-22)"'
+
+	kubectl get customresourcedefinition -A -o json | \
+  jq '.items[] | select(.apiVersion| test("^apiextensions.k8s.io/v1beta1$")) | "Resource \(.metadata.namespace)/\(.metadata.name) contains deprecated apiVersion: \(.apiVersion), please use alternative (see: https://kubernetes.io/docs/reference/using-api/deprecation-guide/#v1-22)"'
+
+	kubectl get mutatingwebhookconfiguration,validatingwebhookconfiguration -A -o json | \
+	jq '.items[] | select(.apiVersion| test("^admissionregistration.k8s.io/v1beta1$")) | "Resource \(.metadata.namespace)/\(.metadata.name) contains deprecated apiVersion: \(.apiVersion), please use alternative (see: https://kubernetes.io/docs/reference/using-api/deprecation-guide/#v1-22)"'
+}
+
+function kcd-k8s-v1-25 {
+	kubectl get runtimeclass -A -o json | \
+	jq '.items[] | select(.apiVersion| test("^node.k8s.io/v1beta1$")) | "Resource \(.metadata.namespace)/\(.metadata.name) contains deprecated apiVersion: \(.apiVersion), please use alternative (see: https://kubernetes.io/docs/reference/using-api/deprecation-guide/#v1-25)"'
+
+	kubectl get podsecuritypolicy -A -o json | \
+	jq '.items[] | select(.apiVersion| test("^policy/v1beta1$")) | "Resource \(.metadata.namespace)/\(.metadata.name) contains deprecated apiVersion: \(.apiVersion), please use alternative (see: https://kubernetes.io/docs/reference/using-api/deprecation-guide/#v1-25)"'
+
+	kubectl get poddisruptionbudget -A -o json | \
+	jq '.items[] | select(.apiVersion| test("^policy/v1beta1$")) | "Resource \(.metadata.namespace)/\(.metadata.name) contains deprecated apiVersion: \(.apiVersion), please use alternative (see: https://kubernetes.io/docs/reference/using-api/deprecation-guide/#v1-25)"'
+
+	kubectl get event -A -o json | \
+	jq '.items[] | select(.apiVersion| test("^events.k8s.io/v1beta1$")) | "Resource \(.metadata.namespace)/\(.metadata.name) contains deprecated apiVersion: \(.apiVersion), please use alternative (see: https://kubernetes.io/docs/reference/using-api/deprecation-guide/#v1-25)"'
+
+	kubectl get endpointslice -A -o json | \
+	jq '.items[] | select(.apiVersion| test("^discovery.k8s.io/v1beta1$")) | "Resource \(.metadata.namespace)/\(.metadata.name) contains deprecated apiVersion: \(.apiVersion), please use alternative (see: https://kubernetes.io/docs/reference/using-api/deprecation-guide/#v1-25)"'
+
+	kubectl get cronjob -A -o json | \
+	jq '.items[] | select(.apiVersion| test("^batch/v1beta1$")) | "Resource \(.metadata.namespace)/\(.metadata.name) contains deprecated apiVersion: \(.apiVersion), please use alternative (see: https://kubernetes.io/docs/reference/using-api/deprecation-guide/#v1-25)"'
+}
+
+# List all pods with namespace and phase of pod
+#kc get pods -A -o json | jq '.items[] | "\(.metadata.name) (\(.metadata.namespace)) status \(.status.phase)"'
+
+# List all pods with namespace and phase of pod but filter on phase
+#kc get pods -A -o json | jq '.items[] | select(.status.phase == "Pending") |  "\(.metadata.name) (\(.metadata.namespace)) status \(.status.phase)"'
+
+# Apply resource limiting to all namespaces (note, do not do this for system namespaces)
+function kcm-limitrange-all-namespaces {
+	kubectl get namespaces -o json | jq -r '.items[] | "kubectl create -n \(.metadata.name) -f default-limit-range.yaml"'
+}
+
+# Helm
+function h {
+	helm "$@"
+}
+
+function hn {
+	helm -n $(kcn-get) "$@"
+}
+
+function hls {
+	helm -n $(kcn-get) ls "$@"
+}
+
+function hals {
+	helm ls --all-namespaces
+}
+
+function hgv {
+	helm -n $(kcn-get) get values
+}
+
+function hd {
+	helm -n $(kcn-get) delete
+}
+
+# Helmfile
+function hf {
+	helmfile "$@"
+}
+
+# Port forward rabbitmq
+function kc-pf-rmq {
+	podName=`kubectl -n $(kcn-get) get pods --selector=app=rabbitmq -o json | jq -r '.items[0].metadata.name'`
+	if [ -z "$podName" ]
+	then
+		echo "Could not find rabbitmq pod"
+		return 1
+	fi
+	adminUser=`kubectl -n $(kcn-get) get secret rabbitmq-secrets -o json | jq -r .data.RABBITMQ_ADMIN_USER | base64 -d`
+	adminPass=`kubectl -n $(kcn-get) get secret rabbitmq-secrets -o json | jq -r .data.RABBITMQ_ADMIN_PASS | base64 -d`
+	echo "Opening port to RabbitMQ at http://localhost:25672."
+	echo "Username: $adminUser"
+	echo "Password: $adminPass"
+	kubectl -n $(kcn-get) port-forward $podName 25672:15672
+}
