@@ -14,6 +14,8 @@ _darcs
 \.git
 \.gitignore
 
+\dependency-check
+
 .+~          # emacs backup files
 \#.*\#       # emacs autosave files
 

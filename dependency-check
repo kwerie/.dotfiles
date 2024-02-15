@@ -1,0 +1,20 @@
+#! /usr/bin/env bash
+
+dependencies=("kubectl" "docker" "terraform" "ansible" "cmk" "git" "doctl" "xclip" "batcat" "dig" "s3cmd")
+missingDependencies=()
+
+for dep in ${dependencies[@]}; do
+    if [[ ! $(which $dep) ]]; then
+        missingDependencies+=($dep)
+    fi
+done
+
+if [[ $missingDependencies ]]; then
+    echo Aliases for the following dDependencies will not work, because they\'re not installed:
+    echo -------------------------------------------------------------------------------------
+    INDEX=1
+    for dep in ${missingDependencies[@]}; do
+        echo $INDEX. $dep
+        INDEX=$(expr ${INDEX} + 1)
+    done
+fi

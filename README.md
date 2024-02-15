@@ -11,8 +11,10 @@ This repo houses all of the dotfiles needed for terminal configuration (aliases,
 
 
 ## Installation
-1. Update your repositories (e.g. sudo apt update)
-2. Clone this repository to your `$HOME` directory
-3. cd  `$ .dotfiles`
-4. `$ stow .`
+Update your repositories (e.g. sudo apt update)
+Clone this repository to your `$HOME` directory
+```
+$ cd .dotfiles
+$ stow .
+```
 
