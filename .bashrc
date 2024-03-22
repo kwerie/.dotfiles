@@ -115,3 +115,16 @@ if ! shopt -oq posix; then
     . /etc/bash_completion
   fi
 fi
+
+# Load my own aliases
+#source ~/.bash/aliases/.ansible.aliases
+source ~/.bash/aliases/.bash.aliases
+#source ~/.bash/aliases/.cmk.aliases
+source ~/.bash/aliases/.docker.aliases
+source ~/.bash/aliases/.git.aliases
+source ~/.bash/aliases/.kubectl.aliases
+#source ~/.bash/aliases/.terraform.aliases
+#source ~/.bash/aliases/.doctl.aliases
+#export PATH="$HOME/.bash/bin:$PATH"
+export TERM=xterm-256color
+
