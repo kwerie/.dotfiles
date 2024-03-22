@@ -1,8 +1,8 @@
 require('lualine').setup {
   options = {
     icons_enabled = true,
-    --theme = 'gruvbox',
-    theme = 'catppuccin',
+    theme = 'gruvbox',
+    --theme = 'catppuccin',
   },
   sections = {
     lualine_a = {
