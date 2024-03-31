@@ -1,6 +1,6 @@
 require("mason").setup()
 require("mason-lspconfig").setup({
-    ensure_installed = { "lua_ls", "intelephense", "tsserver", "angularls", "cssls", "html" }
+    ensure_installed = { "lua_ls", "intelephense", "tsserver", "angularls", "cssls", "html", "csharp_ls" }
 })
 local lspconfig = require("lspconfig")
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
@@ -22,6 +22,9 @@ lspconfig.cssls.setup({
     capabilities = capabilities
 })
 lspconfig.html.setup({
+    capabilities = capabilities
+})
+lspconfig.csharp_ls.setup({
     capabilities = capabilities
 })
 -- Use LspAttach autocommand to only map the following keys
