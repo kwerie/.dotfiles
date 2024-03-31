@@ -1,0 +1,5 @@
+[user]
+	email = hermsen.rico@gmail.com
+	name = kwerie
+[core]
+	excludesfile = /home/kwerie/.gitignore
