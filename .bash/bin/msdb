@@ -1,0 +1,40 @@
+#! /usr/bin/env bash
+
+if [[ ! $(which docker) ]]; then
+	echo "Docker is not installed, exiting now"
+	exit 1
+fi
+
+existingContainer=$(docker ps | grep -e mssql | awk '{print $1}')
+
+if [[ $existingContainer ]]; then
+	echo "There already is an existing databae container running with id: $existingContainer."
+	read -p "Do you wish to enter the container? [Yy/Nn] " yn
+		case $yn in
+			[Yy]* ) msdb-exec;;
+			[Nn]* ) exit;;
+		esac
+	exit 1;
+fi
+
+dbPass=$1
+
+if [[ ! $dbPass ]]; then
+	dbPass="Welkom01!"
+	echo "No default db password has been set, using $dbPass"
+else
+	echo "Custom db password has been set, using: $dbPass"
+fi
+
+containerId=$(docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=$dbPass" -p 1433:1433 -d mcr.microsoft.com/mssql/server:2022-latest)
+
+echo $dbPass > $HOME/.tmp/msdb-pass
+echo "Container created with id: $containerId"
+while true; do
+	read -p "Do you wish you enter the container in sqlcmd? [Yy/Nn] " yn
+	case $yn in
+		[Yy]* ) echo "Waiting for container to be online."; sleep 2; echo "Connecting...";  sleep 5; docker exec -it $containerId /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P $dbPass; break;;
+		[Nn]* ) echo "If you wish to access the database at a later time, you can do so by using the following command: docker exec -it $containerId /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P $dbPass"; exit;;
+	esac
+done
+#docker exec -it 40f12009954f /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P Welkom01!

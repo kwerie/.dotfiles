@@ -123,8 +123,9 @@ source ~/.bash/aliases/.bash.aliases
 source ~/.bash/aliases/.docker.aliases
 source ~/.bash/aliases/.git.aliases
 source ~/.bash/aliases/.kubectl.aliases
+source ~/.bash/aliases/.dotnet.aliases
 #source ~/.bash/aliases/.terraform.aliases
 #source ~/.bash/aliases/.doctl.aliases
-#export PATH="$HOME/.bash/bin:$PATH"
+export PATH="$HOME/.bash/bin:$PATH"
 export TERM=xterm-256color
 

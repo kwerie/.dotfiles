@@ -1,0 +1,2 @@
+alias dr="dotnet run"
+alias db="dotnet build"

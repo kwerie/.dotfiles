@@ -1,0 +1,18 @@
+#! /usr/bin/env bash
+
+containerId=$(docker ps | grep -e mssql | awk '{print $1}')
+
+if [[ ! $containerId ]]; then
+	echo "There is no database container available. Please create one first using msdb"
+	exit 1
+fi
+
+pass=$(cat $HOME/.tmp/msdb-pass 2>/dev/null)
+
+if [[ ! $pass ]]; then
+	echo "No database password has been stored in $HOME/.tmp/msdb-pass"
+	read -p "Please provide the database password: " pass
+	echo $pass > $HOME/.tmp/msdb-pass
+fi
+
+docker exec -it $containerId /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P $pass
