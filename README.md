@@ -18,18 +18,3 @@ cd .dotfiles
 stow .
 ```
 
-
-By default, i3(wm) installs dmenu. The downsight to this is that you can't customize it.
-On Debian and Debian-based distros, you can install the dependencies using the following command:
-
-```
-sudo apt-get install libx11-dev libxft-dev libxinerama-dev build-essential sharutils
-```
-
-Optionally, you can install `dwm` (window manager):
-```
-git clone https://git.suckless.org/dwm
-cd dwm/
-make
-sudo make install
-```
