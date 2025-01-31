@@ -16,36 +16,43 @@ map Q gq
 
 " Highlight copied text
 Plug 'machakann/vim-highlightedyank'
+
 " Commentary plugin
 Plug 'tpope/vim-commentary'
+
 " Surround plugin
 Plug 'tpope/vim-surround'
 
-"" -- Map IDE actions to IdeaVim -- https://jb.gg/abva4t
-"" Map \r to the Reformat Code action
-"map \r <Action>(ReformatCode)
+" textobj-entire
+Plug 'kana/vim-textobj-entire'
 
-"" Map <leader>d to start debug
-"map <leader>d <Action>(Debug)
+" vim-multiple-cursors
+Plug 'terryma/vim-multiple-cursors'
 
-"" Map \b to toggle the breakpoint on the current line
-"map \b <Action>(ToggleLineBreakpoint)
+" -- Map IDE actions to IdeaVim -- https://jb.gg/abva4t
+" Map \r to the Reformat Code action
+map \r <Action>(ReformatCode)
+
+" Map <leader>d to start debug
+map <leader>d <Action>(Debug)
+
+" Map \b to toggle the breakpoint on the current line
+map \b <Action>(ToggleLineBreakpoint)
 
 " Set relative line numbers and current line number
 set number relativenumber
 
-" Disable the annoying bell sound
+" Disable the annoying windows bell sound
 set visualbell
 
 " Keep the cursor as a block while in insert mode
 " https://vi.stackexchange.com/questions/25757/changing-cursor-to-block-in-insert-mode-on-neovim
 " set guicursor=i:block
-
 " scrolloff=x makes the screen scroll when x lines of code are remaining till the bottom of the screen.
-set scrolloff=20
+set scrolloff=8
 
 " Share clipboard with system clipboard.
-clipboard+=unnamed
+set clipboard+=unnamed
 
 " Search improvements
 set ignorecase " tells Vim to use case-insensitive search by default.
@@ -62,8 +69,34 @@ map <leader>rn <Action>(RenameElement)
 
 nnoremap <leader>h :nohlsearch<CR>
 
+" Map 'jj' in insert mode to act as Escape
+inoremap jj <Esc>
+
+" Map 'JJ' in insert mode to act as Escape
+inoremap JJ <Esc>
+
 " Go to method implementation
 nmap gi :action GotoImplementation<CR>
 
+" Find usages of current symbol
+nmap gr :action ShowUsages<CR>
+
 " Allow surrounding
 set surround
+
+" Remap multiple-cursors shortcuts to match terryma/vim-multiple-cursors
+nmap <C-n> <Plug>NextWholeOccurrence
+xmap <C-n> <Plug>NextWholeOccurrence
+nmap g<C-n> <Plug>NextOccurrence
+xmap g<C-n> <Plug>NextOccurrence
+xmap <C-x> <Plug>SkipOccurrence
+xmap <C-p> <Plug>RemoveOccurrence
+
+" Note that the default <A-n> and g<A-n> shortcuts don't work on Mac due to dead keys.
+" <A-n> is used to enter accented text e.g. ñ
+" Feel free to pick your own mappings that are not affected. I like to use <leader>
+nmap <leader><C-n> <Plug>AllWholeOccurrences
+xmap <leader><C-n> <Plug>AllWholeOccurrences
+nmap <leader>g<C-n> <Plug>AllOccurrences
+xmap <leader>g<C-n> <Plug>AllOccurrences
+
