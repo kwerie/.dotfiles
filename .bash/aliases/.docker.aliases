@@ -2,6 +2,41 @@
 
 alias dcu="docker compose up -d"
 alias dcs="docker compose stop"
+# TODO: make dcsa a function that can accept an optional argument to stop all containers containing a name
+#alias dcsa="docker ps --format json | jq .ID | xargs docker stop" # stop all docker containers
+function dcsa() {
+	available=$(docker ps --format 'table {{.Names}}')
+
+	if [ ! $1 ]; then
+		# TODO: move this to a function or something (including the available variable)
+		if [ ${#available} == 5 ]; then
+			echo "No containers are running";
+			return;
+		fi
+
+		echo "Stopping all running Docker containers";
+		docker ps --format json | jq .ID | xargs docker stop >/dev/null
+		return;
+	fi
+
+	containers=$(docker ps --filter name=^"$1" --format json | jq .ID);
+	
+	if [ ${#containers} == 0 ]; then
+
+		if [ ${#available} == 5 ]; then
+			echo "No containers are running";
+			return;
+		fi
+
+		echo "No containers running beginning with $1. Here's a list of available containers:"
+		echo "$available";
+
+		return;
+	fi
+
+	echo "Stopping all running containers beginning with $1";
+	docker ps --filter name=^"$1" --format json | jq .ID | xargs docker stop >/dev/null
+}
 alias dcr="docker compose restart"
 alias dc="docker compose"
 alias d="docker"
@@ -9,4 +44,3 @@ alias dps="docker ps --format 'table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Image}
 alias dcl="docker compose logs -f"
 alias dive="docker run -ti --rm  -v /var/run/docker.sock:/var/run/docker.sock wagoodman/dive"
 alias trivy-scan="docker run --rm  -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image"
-

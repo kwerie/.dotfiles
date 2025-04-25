@@ -1,5 +1,6 @@
 [user]
-	email = hermsen.rico@gmail.com
+	email = rico@jrny.nl
 	name = Rico Hermsen
 [core]
-	excludesfile = /home/kwerie/.gitignore
+	excludesfile = /home/ricohermsen/.gitignore
+	autocrlf = input

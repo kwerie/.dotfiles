@@ -16,16 +16,12 @@ map Q gq
 
 " Highlight copied text
 Plug 'machakann/vim-highlightedyank'
-
 " Commentary plugin
 Plug 'tpope/vim-commentary'
-
 " Surround plugin
 Plug 'tpope/vim-surround'
-
 " textobj-entire
 Plug 'kana/vim-textobj-entire'
-
 " vim-multiple-cursors
 Plug 'terryma/vim-multiple-cursors'
 
@@ -47,7 +43,8 @@ set visualbell
 
 " Keep the cursor as a block while in insert mode
 " https://vi.stackexchange.com/questions/25757/changing-cursor-to-block-in-insert-mode-on-neovim
-" set guicursor=i:block
+set guicursor=i:block
+
 " scrolloff=x makes the screen scroll when x lines of code are remaining till the bottom of the screen.
 set scrolloff=8
 
