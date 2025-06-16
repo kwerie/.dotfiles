@@ -126,6 +126,23 @@ source ~/.bash/aliases/.kubectl.aliases
 source ~/.bash/aliases/.dotnet.aliases
 #source ~/.bash/aliases/.terraform.aliases
 #source ~/.bash/aliases/.doctl.aliases
+
+# TODO: add a check to see whether or not the .dotnet/tools exist
+# Add .NET Core SDK tools
+export PATH="$PATH:/home/rico/.dotnet/tools"
+
 export PATH="$HOME/.bash/bin:$PATH"
 export TERM=xterm-256color
 
+# fnm
+FNM_PATH="/home/rico/.local/share/fnm"
+if [ -d "$FNM_PATH" ]; then
+  export PATH="$FNM_PATH:$PATH"
+  eval "$(fnm env --use-on-cd --shell bash)"
+  #eval "`fnm env`"
+fi
+
+export LIBVIRT_DEFAULT_URI='qemu:///system'
+
+export PATH="/home/rico/.local/bin:$PATH"
+export KUBE_EDITOR="nvim"
