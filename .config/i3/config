@@ -57,6 +57,7 @@ bindsym Print exec flameshot gui
 bindsym $mod+Control+w exec --no-startup-id ~/fix-monitor-layout.sh
 
 bindsym $mod+Escape exec --no-startup-id i3lock -t -i ~/.config/i3/lockscreen.png
+bindsym $mod+b exec firefox --new-window
 
 # Force the display-manager to be restarted # TODO: not ideal
 #exec --no-startup-id sudo systemctl restart display-manager
