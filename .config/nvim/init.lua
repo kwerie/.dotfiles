@@ -347,6 +347,17 @@ require('lazy').setup({
       -- Allows extra capabilities provided by nvim-cmp
       'hrsh7th/cmp-nvim-lsp',
     },
+    setup = {
+      yamlls = function()
+        vim.lsp.on_attach(function(client, buffer)
+          if vim.bo[buffer].filetype == 'helm' then
+            vim.schedule(function()
+              vim.cmd 'LspStop ++force yamlls'
+            end)
+          end
+        end, 'yamlls')
+      end,
+    },
     config = function()
       -- Brief aside: **What is LSP?**
       --
@@ -494,75 +505,109 @@ require('lazy').setup({
       --  - capabilities (table): Override fields in capabilities. Can be used to disable certain LSP features.
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
-      local servers = {
-        -- clangd = {},
-        -- gopls = {},
-        -- pyright = {},
-        -- rust_analyzer = {},
-        -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
-        --
-        -- Some languages (like typescript) have entire language plugins that can be useful:
-        --    https://github.com/pmizio/typescript-tools.nvim
-        --
-        -- But for many setups, the LSP (`ts_ls`) will work just fine
-        --
-        ts_ls = {},
-        eslint = {
-          settings = {
-            -- helps eslint find the eslintrc when it's placed in a subfolder instead of the cwd root
-            workingDirectories = { mode = 'auto' },
-            format = auto_format,
+      local servers =
+        {
+          -- clangd = {},
+          -- gopls = {},
+          -- pyright = {},
+          -- rust_analyzer = {},
+          -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
+          --
+          -- Some languages (like typescript) have entire language plugins that can be useful:
+          --    https://github.com/pmizio/typescript-tools.nvim
+          --
+          -- But for many setups, the LSP (`ts_ls`) will work just fine
+          --
+          ts_ls = {},
+          eslint = {
+            settings = {
+              -- helps eslint find the eslintrc when it's placed in a subfolder instead of the cwd root
+              workingDirectories = { mode = 'auto' },
+              format = auto_format,
+            },
           },
-        },
-        omnisharp = {
-          cmd = {
-            vim.fn.stdpath 'data' .. '/mason/packages/omnisharp/OmniSharp',
-            '--languageserver',
-            '--hostPID',
-            tostring(vim.fn.getpid()),
+          -- TODO: C# LSP
+          omnisharp = {
+            cmd = {
+              vim.fn.stdpath 'data' .. '/mason/packages/omnisharp/OmniSharp',
+              '--languageserver',
+              '--hostPID',
+              tostring(vim.fn.getpid()),
+            },
+            enable_editorconfig_support = true,
+            enable_ms_build_load_projects_on_demand = false,
+            enable_roslyn_analyzers = true,
+            organize_imports_on_format = true,
+            enable_import_completion = true,
+            sdk_include_prereleases = true,
+            analyze_open_documents_only = false,
+            capabilities = require('cmp_nvim_lsp').default_capabilities(),
           },
-          enable_editorconfig_support = true,
-          enable_ms_build_load_projects_on_demand = false,
-          enable_roslyn_analyzers = true,
-          organize_imports_on_format = true,
-          enable_import_completion = true,
-          sdk_include_prereleases = true,
-          analyze_open_documents_only = false,
-          capabilities = require('cmp_nvim_lsp').default_capabilities(),
-        },
-        pyright = {},
-        intelephense = {
-          --   settings = {
-          --     intelephense = {
-          --       stubs = {
-          --         'blade',
-          --       },
-          --     },
-          --   },
-        },
-        lua_ls = {
-          -- cmd = { ... },
-          -- filetypes = { ... },
-          -- capabilities = {},
-          settings = {
-            Lua = {
-              completion = {
-                callSnippet = 'Replace',
+          pyright = {},
+          intelephense = {
+            --   settings = {
+            --     intelephense = {
+            --       stubs = {
+            --         'blade',
+            --       },
+            --     },
+            --   },
+          },
+          lua_ls = {
+            -- cmd = { ... },
+            -- filetypes = { ... },
+            -- capabilities = {},
+            settings = {
+              Lua = {
+                completion = {
+                  callSnippet = 'Replace',
+                },
+                -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
+                -- diagnostics = { disable = { 'missing-fields' } },
               },
-              -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
-              -- diagnostics = { disable = { 'missing-fields' } },
+            },
+          },
+          helm_ls = {},
+          yamlls = {
+            -- Have to add this for yamlls to understand that we support line folding
+            capabilities = {
+              textDocument = {
+                foldingRange = {
+                  dynamicRegistration = false,
+                  lineFoldingOnly = true,
+                },
+              },
+            },
+            -- lazy-load schemastore when needed
+            on_new_config = function(new_config)
+              new_config.settings.yaml.schemas = vim.tbl_deep_extend('force', new_config.settings.yaml.schemas or {}, require('schemastore').yaml.schemas())
+            end,
+            settings = {
+              redhat = { telemetry = { enabled = false } },
+              yaml = {
+                keyOrdering = false,
+                format = {
+                  enable = true,
+                },
+                validate = true,
+                schemaStore = {
+                  -- Must disable built-in schemaStore support to use
+                  -- schemas from SchemaStore.nvim plugin
+                  enable = false,
+                  -- Avoid TypeError: Cannot read properties of undefined (reading 'length')
+                  url = '',
+                },
+              },
             },
           },
         },
-      }
-
-      -- Ensure the servers and tools above are installed
-      --  To check the current status of installed tools and/or manually install
-      --  other tools, you can run
-      --    :Mason
-      --
-      --  You can press `g?` for help in this menu.
-      require('mason').setup()
+        -- Ensure the servers and tools above are installed
+        --  To check the current status of installed tools and/or manually install
+        --  other tools, you can run
+        --    :Mason
+        --
+        --  You can press `g?` for help in this menu.
+        require('mason').setup()
 
       -- You can add other tools here that you want Mason to install
       -- for you, so that they are available from within Neovim.
@@ -838,7 +883,24 @@ require('lazy').setup({
     main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc', 'php', 'c_sharp' },
+      ensure_installed = {
+        'bash',
+        'c',
+        'diff',
+        'html',
+        'lua',
+        'luadoc',
+        'markdown',
+        'markdown_inline',
+        'query',
+        'vim',
+        'vimdoc',
+        'php',
+        'c_sharp',
+        'helm',
+        'yaml',
+        'gotmpl',
+      },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
@@ -857,7 +919,10 @@ require('lazy').setup({
     --    - Show your current context: https://github.com/nvim-treesitter/nvim-treesitter-context
     --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
   },
-
+  {
+    'towolf/vim-helm',
+    ft = { 'helm' },
+  },
   -- The following comments only work if you have downloaded the kickstart repo, not just copy pasted the
   -- init.lua. If you want these files, they are in the repository, so you can just download them and
   -- place them in the correct locations.
