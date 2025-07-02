@@ -60,7 +60,7 @@ vim.opt.splitbelow = true
 --  See `:help 'list'`
 --  and `:help 'listchars'`
 vim.opt.list = true
-vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣', space = '⋅' }
+vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
 
 -- Preview substitutions live, as you type!
 vim.opt.inccommand = 'split'
@@ -105,6 +105,10 @@ vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left wind
 vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
+
+vim.keymap.set('n', '<leader>e', '<cmd>Ex<CR>', { desc = '[E]xplore (open netrw)' })
+vim.keymap.set('n', '<leader>se', '<cmd>Sex<CR>', { desc = '[E]xplore [H]orizontal split' })
+vim.keymap.set('n', '<leader>ve', '<cmd>Vex<CR>', { desc = '[E]xplore [V]ertical split' })
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
@@ -281,7 +285,10 @@ require('lazy').setup({
       local builtin = require 'telescope.builtin'
       vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
       vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
-      vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
+      -- vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
+      vim.keymap.set('n', '<leader>sf', function()
+        builtin.find_files { hidden = true, no_ignore = true, file_ignore_patterns = { '%.git/' } }
+      end, { desc = '[S]earch [F]iles' })
       vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
       vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
       vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' }) -- NOTE: This requires ripgrep to be installed
@@ -519,6 +526,8 @@ require('lazy').setup({
           -- But for many setups, the LSP (`ts_ls`) will work just fine
           --
           ts_ls = {},
+          dockerls = {},
+          docker_compose_language_service = {},
           eslint = {
             settings = {
               -- helps eslint find the eslintrc when it's placed in a subfolder instead of the cwd root
@@ -615,6 +624,7 @@ require('lazy').setup({
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
         'prettier', -- Used to format JavaScript code
+        'hadolint', -- Used to lint Dockerfiles
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -836,7 +846,26 @@ require('lazy').setup({
       vim.cmd.hi 'String gui=none'
     end,
   },
+  {
+    'rose-pine/neovim',
+    name = 'rose-pine',
+    config = function()
+      require('rose-pine').setup {
+        variant = 'main',
+        dark_variant = 'main',
+        styles = {
+          bold = true,
+          italic = false,
+          transparency = false,
+        },
+      }
 
+      --vim.cmd 'colorscheme rose-pine'
+      vim.cmd.hi 'Comment gui=none'
+      vim.cmd.hi 'String gui=none'
+      vim.cmd.hi 'Normal guibg=none'
+    end,
+  },
   -- Highlight todo, notes, etc in comments
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
 
@@ -900,6 +929,7 @@ require('lazy').setup({
         'helm',
         'yaml',
         'gotmpl',
+        'dockerfile',
       },
       -- Autoinstall languages that are not installed
       auto_install = true,
