@@ -2,5 +2,5 @@
 	email = rico@jrny.nl
 	name = Rico Hermsen
 [core]
-	excludesfile = /home/ricohermsen/.gitignore
+	excludesfile = ~/.gitignore
 	autocrlf = input

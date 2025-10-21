@@ -25,6 +25,11 @@ vim.opt.mouse = 'a'
 -- Don't show the mode, since it's already in the status line
 vim.opt.showmode = false
 
+-- Enable editorconfig
+vim.g.editorconfig = false
+
+vim.o.guicursor = 'n-v-c-sm:block,i-ci-ve:block,r-cr-o:hor20'
+
 -- Sync clipboard between OS and Neovim.
 --  Schedule the setting after `UiEnter` because it can increase startup-time.
 --  Remove this option if you want your OS clipboard to remain independent.
@@ -80,6 +85,12 @@ vim.keymap.set('n', '<leader>h', '<cmd>nohlsearch<CR>')
 
 -- Diagnostic keymaps
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
+vim.keymap.set('n', '<leader>jd', function()
+  vim.diagnostic.jump { count = 1 }
+end, { desc = 'Jump to next diagnostic' })
+vim.keymap.set('n', '<leader>pd', function()
+  vim.diagnostic.jump { count = -1 }
+end, { desc = 'Jump to previous diagnostic' })
 
 vim.g.ai_cmp = false --Has to be set to false in order to use GitHub Copilot
 
@@ -164,6 +175,8 @@ require('lazy').setup({
   --    require('gitsigns').setup({ ... })
   --
   -- See `:help gitsigns` to understand what the configuration keys do
+
+  require 'custom.plugins',
   { -- Adds git related signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
     opts = {
@@ -321,6 +334,13 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sn', function()
         builtin.find_files { cwd = vim.fn.stdpath 'config' }
       end, { desc = '[S]earch [N]eovim files' })
+    end,
+  },
+  {
+    'GustavEikaas/easy-dotnet.nvim',
+    dependencies = { 'nvim-lua/plenary.nvim', 'nvim-telescope/telescope.nvim' },
+    config = function()
+      require('easy-dotnet').setup()
     end,
   },
 
@@ -496,6 +516,38 @@ require('lazy').setup({
       --   vim.diagnostic.config { signs = { text = diagnostic_signs } }
       -- end
 
+      vim.api.nvim_create_autocmd('CursorHold', {
+        callback = function()
+          -- Skip if a floating window is already open (e.g. hover)
+          for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+            local config = vim.api.nvim_win_get_config(win)
+            if config.relative ~= '' then
+              return
+            end
+          end
+          vim.diagnostic.open_float(nil, {
+            focusable = false,
+            close_events = { 'BufLeave', 'CursorMoved', 'InsertEnter', 'FocusLost' },
+            border = 'rounded',
+            source = 'always',
+            prefix = '',
+            scope = 'cursor',
+          })
+        end,
+      })
+      vim.diagnostic.config {
+        update_in_insert = false,
+        underline = true,
+        virtual_lines = false,
+        -- virtual_lines = {
+        --   -- Show virtual lines for diagnostics
+        --   --  This is useful for languages that don't have a lot of whitespace
+        --   --  (like C, C++, Rust, etc.)
+        --   -- only_current_line = true,
+        --   current_line = true,
+        -- },
+      }
+
       -- LSP servers and clients are able to communicate to each other what features they support.
       --  By default, Neovim doesn't support everything that is in the LSP specification.
       --  When you add nvim-cmp, luasnip, etc. Neovim now has *more* capabilities.
@@ -525,7 +577,9 @@ require('lazy').setup({
           --
           -- But for many setups, the LSP (`ts_ls`) will work just fine
           --
+          gopls = {},
           ts_ls = {},
+          jsonls = {},
           dockerls = {},
           docker_compose_language_service = {},
           eslint = {
@@ -663,7 +717,10 @@ require('lazy').setup({
         -- Disable "format_on_save lsp_fallback" for languages that don't
         -- have a well standardized coding style. You can add additional
         -- languages here or re-enable it for the disabled ones.
-        local disable_filetypes = { c = true, cpp = true }
+        local disable_filetypes = {
+          c = true,
+          -- cpp = true
+        }
         local lsp_format_opt
         if disable_filetypes[vim.bo[bufnr].filetype] then
           lsp_format_opt = 'never'
@@ -671,7 +728,8 @@ require('lazy').setup({
           lsp_format_opt = 'fallback'
         end
         return {
-          timeout_ms = 500,
+          -- timeout_ms = 500,
+          timeout_ms = 1000,
           lsp_format = lsp_format_opt,
         }
       end,
@@ -683,6 +741,7 @@ require('lazy').setup({
         -- You can use 'stop_after_first' to run the first available formatter from the list
         javascript = { 'prettierd', 'prettier', stop_after_first = true },
         typescript = { 'prettierd', 'prettier', stop_after_first = true },
+        json = { 'prettierd', 'prettier' },
       },
     },
   },
@@ -827,7 +886,12 @@ require('lazy').setup({
       }
     end,
   },
-
+  -- {
+  --   url = 'https://git.filnar.com/fiplox/gruber-darker.nvim',
+  --   init = function()
+  --     vim.cmd.colorscheme 'gruber-darker'
+  --   end,
+  -- },
   { -- You can easily change to a different colorscheme.
     -- Change the name of the colorscheme plugin below, and then
     -- change the command in the config to whatever the name of that colorscheme is.
@@ -835,11 +899,11 @@ require('lazy').setup({
     -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
     'ellisonleao/gruvbox.nvim',
     priority = 1000, -- Make sure to load this before all the other start plugins.
-    init = function()
+    config = function()
       -- Load the colorscheme here.
       -- Like many other themes, this one has different styles, and you could load
       -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      vim.cmd.colorscheme 'gruvbox'
+      -- vim.cmd.colorscheme 'gruvbox'
 
       -- You can configure highlights by doing something like:
       vim.cmd.hi 'Comment gui=none'
@@ -860,10 +924,10 @@ require('lazy').setup({
         },
       }
 
-      --vim.cmd 'colorscheme rose-pine'
+      -- vim.cmd 'colorscheme lunaperche' -- also kind of cool
+      vim.cmd 'colorscheme rose-pine'
       vim.cmd.hi 'Comment gui=none'
       vim.cmd.hi 'String gui=none'
-      vim.cmd.hi 'Normal guibg=none'
     end,
   },
   -- Highlight todo, notes, etc in comments
@@ -915,6 +979,7 @@ require('lazy').setup({
       ensure_installed = {
         'bash',
         'c',
+        'cpp',
         'diff',
         'html',
         'lua',
