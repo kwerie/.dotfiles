@@ -17,22 +17,21 @@ set $mod Mod4
 font pango:Hack Nerd Font Mono 12
 
 # set primary Rosé Pine Moon colorscheme colors
-set $base           #232136
-set $surface        #2a273f
-set $overlay        #393552
+set $base           #191724
+set $surface        #1f1d2e
+set $overlay        #26233a
 set $muted          #6e6a86
 set $subtle         #908caa
 set $text           #e0def4
 set $love           #eb6f92
 set $gold           #f6c177
-set $rose           #ea9a97
-set $pine           #3e8fb0
+set $rose           #ebbcba
+set $pine           #31748f
 set $foam           #9ccfd8
 set $iris           #c4a7e7
-set $highlightlow   #2a283e
-set $highlightmed   #44415a
-set $highlighthigh  #56526e
-
+set $highlightlow   #21202e
+set $highlightmed   #403d52
+set $highlighthigh  #524f67
 
 # This font is widely installed, provides lots of unicode glyphs, right-to-left
 # text rendering and scalability on retina/hidpi displays (thanks to pango).
@@ -258,11 +257,11 @@ bar {
  
  hide_edge_borders both
 
-# Teming border and Windows -------------- Rose pine
-# target                title          bg             text     indicator border
-client.focused          $highlightlow  $highlightlow  $text    $iris     $highlightlow
-client.focused_inactive $muted         $muted         $subtle  $muted    $muted
-client.unfocused        $muted         $muted         $subtle  $muted    $muted
-client.urgent           $love          $love          $text    $love     $love
-client.placeholder      $base          $base          $text    $base     $base
-client.background       $base
+# Theming border and Windows -------------- Rose pine Moon
+# target                 title          bg      text     indicator  border
+client.focused           $highlightlow  $base   $text    $rose      $highlightlow
+client.focused_inactive  $muted         $muted  $subtle  $muted     $muted
+client.unfocused         $text          $base   $text    $overlay   $overlay
+client.urgent            $text          $base   $text    $love      $love
+client.placeholder       $base          $base   $text    $base      $base
+client.background        $base
