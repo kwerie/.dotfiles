@@ -246,7 +246,7 @@ bar {
     statusline $text
     separator  $muted
 
-    focused_workspace  $highlightlow $highlightlow $text
+    focused_workspace  $rose $rose $base
     active_workspace   $highlightlow $highlightlow $text
     inactive_workspace $muted $muted $subtle
     urgent_workspace   $love $love $text
