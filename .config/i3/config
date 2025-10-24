@@ -258,10 +258,10 @@ bar {
  hide_edge_borders both
 
 # Theming border and Windows -------------- Rose pine Moon
-# target                 title          bg      text     indicator  border
-client.focused           $highlightlow  $base   $text    $rose      $highlightlow
-client.focused_inactive  $muted         $muted  $subtle  $muted     $muted
-client.unfocused         $text          $base   $text    $overlay   $overlay
+# target                 border         bg      text     indicator  title
+client.focused           $rose          $rose   $base    $rose      $base
+client.focused_inactive  $base         $base  $text    $muted     $base
+client.unfocused         $base         $base  $subtle  $overlay   $base
 client.urgent            $text          $base   $text    $love      $love
 client.placeholder       $base          $base   $text    $base      $base
 client.background        $base
