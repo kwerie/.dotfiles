@@ -19,6 +19,9 @@ vim.opt.showmode = false
 -- Enable editorconfig
 vim.g.editorconfig = false
 
+vim.o.title = true
+vim.o.titlestring = '%t — %F'
+
 -- Cursor configuration
 vim.o.guicursor = 'n-v-c-sm:block,i-ci-ve:block,r-cr-o:hor20'
 
