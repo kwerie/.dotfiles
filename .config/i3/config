@@ -100,8 +100,10 @@ exec_always --no-startup-id slack
 floating_modifier $mod
 
 # start a terminal
-#bindsym $mod+Return exec i3-sensible-terminal
-bindsym $mod+Return exec st
+# To change the default terminal, set the TERMINAL environment variable in your ~/.profile or ~/.bashrc file.
+# E.g. to use kitty, add the line: export TERMINAL=/usr/bin/kitty
+bindsym $mod+Return exec i3-sensible-terminal
+#bindsym $mod+Return exec kitty
 
 # kill focused window
 bindsym $mod+Shift+q kill
