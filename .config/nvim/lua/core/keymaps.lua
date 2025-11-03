@@ -29,3 +29,15 @@ vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper win
 vim.keymap.set('n', '<leader>e', '<cmd>Ex<CR>', { desc = '[E]xplore (open netrw)' })
 vim.keymap.set('n', '<leader>se', '<cmd>Sex<CR>', { desc = '[E]xplore [H]orizontal split' })
 vim.keymap.set('n', '<leader>ve', '<cmd>Vex<CR>', { desc = '[E]xplore [V]ertical split' })
+
+vim.keymap.set('n', '<leader>ui', function()
+  for _, action in ipairs {
+    'source.addMissingImports.ts',
+    'source.organizeImports.ts',
+  } do
+    vim.lsp.buf.code_action {
+      context = { only = { action }, diagnostics = {} },
+      apply = true,
+    }
+  end
+end, { desc = 'Update (add + organize) TypeScript imports' })
