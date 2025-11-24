@@ -23,6 +23,7 @@ return {
         'yaml',
         'gotmpl',
         'dockerfile',
+        'twig',
       },
       auto_install = true,
       highlight = {

@@ -156,6 +156,7 @@ return {
           },
         },
         helm_ls = {},
+        twiggy_language_server = {},
         yamlls = {
           capabilities = {
             textDocument = {

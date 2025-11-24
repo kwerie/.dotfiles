@@ -1,6 +1,13 @@
 -- [[ Basic Autocommands ]]
 -- See `:help lua-guide-autocommands`
 
+-- Filetype detection for .volt files (Volt/Twig templates)
+vim.filetype.add {
+  extension = {
+    volt = 'twig',
+  },
+}
+
 -- Highlight when yanking (copying) text
 -- Try it with `yap` in normal mode
 -- See `:help vim.highlight.on_yank()`
