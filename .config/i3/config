@@ -16,23 +16,6 @@ set $mod Mod4
 #font pango:JetBrainsMonoNF 12
 font pango:Hack Nerd Font Mono 12
 
-# set primary Rosé Pine Moon colorscheme colors
-set $base           #191724
-set $surface        #1f1d2e
-set $overlay        #26233a
-set $muted          #6e6a86
-set $subtle         #908caa
-set $text           #e0def4
-set $love           #eb6f92
-set $gold           #f6c177
-set $rose           #ebbcba
-set $pine           #31748f
-set $foam           #9ccfd8
-set $iris           #c4a7e7
-set $highlightlow   #21202e
-set $highlightmed   #403d52
-set $highlighthigh  #524f67
-
 # This font is widely installed, provides lots of unicode glyphs, right-to-left
 # text rendering and scalability on retina/hidpi displays (thanks to pango).
 #font pango:DejaVu Sans Mono 8
@@ -83,17 +66,13 @@ bindsym $mod+Control+w exec --no-startup-id ~/fix-monitor-layout.sh
 bindsym $mod+Escape exec --no-startup-id i3lock -t -i ~/.config/i3/lockscreen.png
 bindsym $mod+b exec firefox --new-window
 
-# Force the display-manager to be restarted # TODO: not ideal
-#exec --no-startup-id sudo systemctl restart display-manager
-
 # Fix monitor layout
-exec --no-startup-id ~/fix-monitor-layout.sh
+exec --no-startup-id ~/fix-monitor-layout.sh # TODO: make this script exist in the repo, clear it and .gitignore it later and add instructions to customize it
 
 # If wallpaper is going to be changed, replace the wallpaper.png file in ~/.dotfiles/.config/i3/ and re-run stow from the .dotfiles root, then reload i3
 #exec_always --no-startup-id feh --bg-scale ~/.config/i3/wallpaper.png
 exec_always --no-startup-id ~/.fehbg
 exec_always --no-startup-id picom &
-exec --no-startup-id notify-send "Loaded i3 config"
 exec_always --no-startup-id slack
 
 # Use Mouse+$mod to drag floating windows to their wanted position
@@ -109,8 +88,7 @@ bindsym $mod+Return exec i3-sensible-terminal
 bindsym $mod+Shift+q kill
 
 # start dmenu (a program launcher)
-#bindsym $mod+d exec --no-startup-id "dmenu_run -nf '#BBBBBB' -nb '#222222' -sb '#005577' -sf '#EEEEEE' -fn 'monospace-12'"
-bindsym $mod+d exec --no-startup-id "dmenu_run -nf '$text' -nb '$base' -sb '$rose' -sf '$base' -fn 'monospace-12'"
+bindsym $mod+d exec --no-startup-id "dmenu_run -nf '#BBBBBB' -nb '#222222' -sb '#005577' -sf '#EEEEEE' -fn 'monospace-12'"
 # A more modern dmenu replacement is rofi:
 # bindcode $mod+40 exec "rofi -modi drun,run -show drun"
 # There also is i3-dmenu-desktop which only displays applications shipping a
@@ -240,52 +218,20 @@ mode "resize" {
 
 bindsym $mod+r mode "resize"
 
+gaps inner 5
+
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
 bar {
   output primary
-
-  # colors {
-  #   background $base
-  #   statusline $text
-  #   separator  $muted
-
-  #   focused_workspace  $rose $rose $base
-  #   active_workspace   $highlightlow $highlightlow $text
-  #   inactive_workspace $muted $muted $subtle
-  #   urgent_workspace   $love $love $text
-  #   binding_mode       $rose $rose $text
-  # }
+  tray_output primary
 
   status_command i3status
-  tray_output primary
 }
 
 bar {
   output nonprimary
-
-  # colors {
-  #   background $base
-  #   statusline $text
-  #   separator  $muted
-
-  #   focused_workspace  $rose $rose $base
-  #   active_workspace   $highlightlow $highlightlow $text
-  #   inactive_workspace $muted $muted $subtle
-  #   urgent_workspace   $love $love $text
-  #   binding_mode       $rose $rose $text
-  # }
-
   tray_output none
 }
  
  hide_edge_borders both
-
-# Theming border and Windows -------------- Rose pine Moon
-# target                 border         bg      text     indicator  title
-# client.focused           $rose          $rose   $base    $rose      $base
-# client.focused_inactive  $base         $base  $text    $muted     $base
-# client.unfocused         $base         $base  $subtle  $overlay   $base
-# client.urgent            $text          $base   $text    $love      $love
-# client.placeholder       $base          $base   $text    $base      $base
-# client.background        $base
