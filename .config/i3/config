@@ -243,27 +243,49 @@ bindsym $mod+r mode "resize"
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
 bar {
-  colors {
-    background $base
-    statusline $text
-    separator  $muted
+  output primary
 
-    focused_workspace  $rose $rose $base
-    active_workspace   $highlightlow $highlightlow $text
-    inactive_workspace $muted $muted $subtle
-    urgent_workspace   $love $love $text
-    binding_mode       $rose $rose $text
-  }
+  # colors {
+  #   background $base
+  #   statusline $text
+  #   separator  $muted
+
+  #   focused_workspace  $rose $rose $base
+  #   active_workspace   $highlightlow $highlightlow $text
+  #   inactive_workspace $muted $muted $subtle
+  #   urgent_workspace   $love $love $text
+  #   binding_mode       $rose $rose $text
+  # }
+
   status_command i3status
+  tray_output primary
+}
+
+bar {
+  output nonprimary
+
+  # colors {
+  #   background $base
+  #   statusline $text
+  #   separator  $muted
+
+  #   focused_workspace  $rose $rose $base
+  #   active_workspace   $highlightlow $highlightlow $text
+  #   inactive_workspace $muted $muted $subtle
+  #   urgent_workspace   $love $love $text
+  #   binding_mode       $rose $rose $text
+  # }
+
+  tray_output none
 }
  
  hide_edge_borders both
 
 # Theming border and Windows -------------- Rose pine Moon
 # target                 border         bg      text     indicator  title
-client.focused           $rose          $rose   $base    $rose      $base
-client.focused_inactive  $base         $base  $text    $muted     $base
-client.unfocused         $base         $base  $subtle  $overlay   $base
-client.urgent            $text          $base   $text    $love      $love
-client.placeholder       $base          $base   $text    $base      $base
-client.background        $base
+# client.focused           $rose          $rose   $base    $rose      $base
+# client.focused_inactive  $base         $base  $text    $muted     $base
+# client.unfocused         $base         $base  $subtle  $overlay   $base
+# client.urgent            $text          $base   $text    $love      $love
+# client.placeholder       $base          $base   $text    $base      $base
+# client.background        $base
