@@ -1,6 +1,11 @@
+function SetColorScheme()
+  vim.cmd 'colorscheme cyberdream'
+end
+
 return {
   {
     'ellisonleao/gruvbox.nvim',
+    name = 'gruvbox',
     priority = 1000,
     config = function()
       -- You can configure highlights by doing something like:
@@ -23,9 +28,6 @@ return {
         },
       }
 
-      -- TODO: move this elsewhere
-      -- Set the colorscheme
-      --vim.cmd 'colorscheme rose-pine'
       vim.cmd.hi 'Comment gui=none'
       vim.cmd.hi 'String gui=none'
     end,
@@ -39,7 +41,6 @@ return {
       require('cyberdream').setup {
         transparent = true,
       }
-      vim.cmd 'colorscheme cyberdream'
       vim.cmd.hi 'Comment gui=none'
       vim.cmd.hi 'String gui=none'
     end,
