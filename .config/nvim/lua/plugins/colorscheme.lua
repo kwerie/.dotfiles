@@ -1,5 +1,5 @@
 function SetColorScheme()
-  vim.cmd 'colorscheme cyberdream'
+  vim.cmd 'colorscheme rose-pine'
 end
 
 return {
@@ -24,7 +24,7 @@ return {
         styles = {
           bold = true,
           italic = false,
-          transparency = false,
+          transparency = true,
         },
       }
 
