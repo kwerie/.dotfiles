@@ -41,6 +41,9 @@ exec --no-startup-id /usr/bin/gnome-keyring-daemon --start --components=secrets,
 # Set prefer dark theme for GTK applications
 exec --no-startup-id gsettings set org.gnome.desktop.interface color-scheme prefer-dark
 
+# Set keyboard layout to US International with Alt+Shift to toggle
+exec_always --no-startup-id setxkbmap -layout "us,us" -variant ",intl" -option "grp:alt_shift_toggle"
+
 # Use pactl to adjust volume in PulseAudio.
 set $refresh_i3status killall -SIGUSR1 i3status
 bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +10% && $refresh_i3status
