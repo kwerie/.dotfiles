@@ -1,5 +1,5 @@
 function SetColorScheme()
-  vim.cmd 'colorscheme rose-pine'
+  vim.cmd 'colorscheme monokai-pro'
 end
 
 return {
@@ -43,6 +43,30 @@ return {
       }
       vim.cmd.hi 'Comment gui=none'
       vim.cmd.hi 'String gui=none'
+    end,
+  },
+  {
+    'loctvl842/monokai-pro.nvim',
+    name = 'monokai-pro',
+    lazy = false,
+    priority = 1000,
+    config = function()
+      require('monokai-pro').setup {
+        transparent_background = true,
+        inc_search = 'background',
+        background_clear = {
+          'float_win',
+          'toggleterm',
+          'telescope',
+          'which-key',
+          'cmp_menu',
+        },
+        override = function()
+          return {
+            ['@markup.raw.block.markdown'] = { bg = 'NONE' },
+          }
+        end,
+      }
     end,
   },
 }

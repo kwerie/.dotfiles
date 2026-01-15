@@ -17,7 +17,12 @@ vim.api.nvim_create_autocmd('LspAttach', {
     end, { buffer = event.buf, silent = true })
 
     -- LSP keymaps
-    map('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
+    -- Use built-in LSP definition for C# to avoid Telescope timing issues with decompiled sources
+    if vim.bo[event.buf].filetype == 'cs' then
+      map('gd', vim.lsp.buf.definition, '[G]oto [D]efinition')
+    else
+      map('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
+    end
     map('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
     map('gI', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
     map('<leader>D', require('telescope.builtin').lsp_type_definitions, 'Type [D]efinition')
@@ -102,7 +107,6 @@ function M.setup()
     dockerls = require 'lsp.dockerls',
     docker_compose_language_service = require 'lsp.docker_compose',
     eslint = require 'lsp.eslint',
-    omnisharp = require 'lsp.omnisharp',
     pyright = require 'lsp.pyright',
     intelephense = require 'lsp.intelephense',
     lua_ls = require 'lsp.lua_ls',
@@ -110,6 +114,7 @@ function M.setup()
     twiggy_language_server = require 'lsp.twig',
     yamlls = require 'lsp.yamlls',
     clangd = {},
+    roslyn = {},
   }
 
   -- Setup Mason
