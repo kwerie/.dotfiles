@@ -30,7 +30,13 @@ return {
     'folke/todo-comments.nvim',
     event = 'VimEnter',
     dependencies = { 'nvim-lua/plenary.nvim' },
-    opts = { signs = false },
+    opts = {
+      signs = false,
+    },
+    config = function()
+      require('todo-comments').setup {}
+      vim.keymap.set('n', '<leader>lt', '<cmd>TodoTelescope<cr>', { desc = 'List TODO comments' })
+    end,
   },
   {
     'echasnovski/mini.nvim',
@@ -49,6 +55,16 @@ return {
       statusline.section_location = function()
         return '%2l:%-2v'
       end
+    end,
+  },
+  {
+    'akinsho/bufferline.nvim',
+    version = '*',
+    dependencies = 'nvim-tree/nvim-web-devicons',
+    config = function()
+      require('bufferline').setup {}
+      vim.keymap.set('n', '<leader>bc', ':BufferLinePickClose<CR>', { desc = 'Close buffer' })
+      vim.keymap.set('n', '<leader>bp', ':BufferLinePick<CR>', { desc = 'Go to buffer' })
     end,
   },
 }
