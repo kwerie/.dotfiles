@@ -59,10 +59,15 @@ return {
   },
   {
     'akinsho/bufferline.nvim',
-    version = '*',
+    version = 'v4.9.1',
     dependencies = 'nvim-tree/nvim-web-devicons',
     config = function()
-      require('bufferline').setup {}
+      require('bufferline').setup {
+        options = {
+          show_buffer_close_icons = false,
+          show_close_icon = false,
+        },
+      }
       vim.keymap.set('n', '<leader>bc', ':BufferLinePickClose<CR>', { desc = 'Close buffer' })
       vim.keymap.set('n', '<leader>bp', ':BufferLinePick<CR>', { desc = 'Go to buffer' })
     end,
