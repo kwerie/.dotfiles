@@ -1,5 +1,5 @@
 function SetColorScheme()
-  vim.cmd 'colorscheme monokai-pro'
+  vim.cmd 'colorscheme rose-pine'
 end
 
 return {
