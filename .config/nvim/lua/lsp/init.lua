@@ -108,7 +108,9 @@ function M.setup()
     docker_compose_language_service = require 'lsp.docker_compose',
     eslint = require 'lsp.eslint',
     pyright = require 'lsp.pyright',
-    intelephense = require 'lsp.intelephense',
+    intelephense = require 'lsp.intelephense', -- completions only, phpactor vim plugin handles navigation/refactoring
+    -- phpactor LSP disabled due to position encoding bug - using vim plugin instead
+    -- phpactor = require 'lsp.phpactor',
     lua_ls = require 'lsp.lua_ls',
     helm_ls = require 'lsp.helm_ls',
     twiggy_language_server = require 'lsp.twig',
