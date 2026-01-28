@@ -148,4 +148,5 @@ export PATH="/home/rico/.local/bin:$PATH"
 export PATH=$PATH:/usr/local/go/bin
 export KUBE_EDITOR="nvim"
 export COLORTERM=truecolor
+export EDITOR="nvim"
 
