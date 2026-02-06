@@ -150,14 +150,14 @@ bindsym $mod+a focus parent
 
 # Define names for default workspaces for which we configure key bindings later on.
 # We use variables to avoid repeating the names in multiple places.
-set $ws1 "1: www"
-set $ws2 "2: vm"
-set $ws3 "3: com"
-set $ws4 "4: dev"
-set $ws5 "5: tools"
-set $ws6 "6: rdp"
+set $ws1 "1"
+set $ws2 "2"
+set $ws3 "3"
+set $ws4 "4"
+set $ws5 "5"
+set $ws6 "6"
 set $ws7 "7"
-set $ws8 "8: music"
+set $ws8 "8"
 set $ws9 "9"
 set $ws10 "10"
 
@@ -221,18 +221,23 @@ bindsym $mod+r mode "resize"
 
 gaps inner 10
 
+default_border pixel 2
+default_floating_border pixel 2
+
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
 bar {
   output primary
   tray_output primary
+  position top
 
   status_command i3status
 }
 
 bar {
+  position top
   output nonprimary
   tray_output none
 }
  
- hide_edge_borders both
+hide_edge_borders both
