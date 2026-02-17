@@ -1,3 +1,5 @@
 .local/
 .local-files/
 .tmp/kubectl-namespace
+.phpactor.*
+**/.claude/settings.local.json
