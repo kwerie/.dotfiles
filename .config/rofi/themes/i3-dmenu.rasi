@@ -1,0 +1,90 @@
+* {
+    font: "CaskaydiaMono Nerd Font Mono 12";
+
+    bg: #222222;
+    fg: #bbbbbb;
+    sel-bg: #005577;
+    sel-fg: #eeeeee;
+    urgent: #900000;
+
+    background-color: @bg;
+    text-color: @fg;
+}
+
+window {
+    width: 50%;
+    border: 1px;
+    border-color: @sel-bg;
+    padding: 0;
+    background-color: @bg;
+}
+
+mainbox {
+    padding: 4px;
+    background-color: @bg;
+}
+
+inputbar {
+    padding: 4px;
+    spacing: 0;
+    background-color: @bg;
+}
+
+prompt {
+    padding: 0 6px 0 0;
+    background-color: @bg;
+    text-color: @fg;
+}
+
+textbox-prompt-colon {
+    expand: false;
+    str: ":";
+    margin: 0 6px 0 0;
+    text-color: @fg;
+    background-color: @bg;
+}
+
+entry {
+    background-color: @bg;
+    text-color: @fg;
+}
+
+listview {
+    //lines: 10;
+    fixed-height: false;
+    spacing: 0;
+    padding: 0;
+    background-color: @bg;
+    // scrollbar: true; // TODO: when enabled, add styling for scrollbar
+    scrollbar: false;
+    require-input: true;
+}
+
+element {
+    padding: 2px 6px;
+    background-color: @bg;
+    text-color: @fg;
+    spacing: 6;
+}
+
+element normal.normal {
+    background-color: @bg;
+}
+
+element selected.normal {
+    background-color: @sel-bg;
+    text-color: @sel-fg;
+}
+
+element urgent.normal {
+    text-color: @urgent;
+}
+
+element-text {
+    background-color: transparent;
+    text-color: inherit;
+}
+
+element-icon {
+    enabled: true;
+}
