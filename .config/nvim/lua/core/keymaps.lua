@@ -41,3 +41,6 @@ vim.keymap.set('n', '<leader>ui', function()
     }
   end
 end, { desc = 'Update (add + organize) TypeScript imports' })
+
+vim.keymap.set('n', '<leader>c', '<cmd>Compile<CR>')
+vim.keymap.set('n', '<leader>rc', '<cmd>Recompile<CR>')
