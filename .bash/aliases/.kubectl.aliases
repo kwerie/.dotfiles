@@ -145,7 +145,7 @@ kca () {
 }
 
 function kce {
-	kubectl exec -itn $(kcn-get) $1 bash
+	kubectl exec -itn $(kcn-get) $1 -- $2
 }
 
 function kces {
