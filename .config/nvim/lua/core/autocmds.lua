@@ -18,3 +18,9 @@ vim.api.nvim_create_autocmd('TextYankPost', {
     vim.highlight.on_yank()
   end,
 })
+
+vim.api.nvim_create_autocmd('BufEnter', {
+  callback = function()
+    vim.wo.colorcolumn = vim.bo.textwidth > 0 and '+0' or ''
+  end,
+})
