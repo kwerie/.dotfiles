@@ -67,7 +67,8 @@ bindsym Print exec flameshot gui
 bindsym $mod+Control+w exec --no-startup-id ~/fix-monitor-layout.sh
 
 bindsym $mod+Escape exec --no-startup-id i3lock -t -i ~/.config/i3/lockscreen.png
-bindsym $mod+b exec firefox --new-window
+#bindsym $mod+b exec firefox --new-window
+bindsym $mod+b exec librewolf --new-window
 
 # Fix monitor layout
 exec --no-startup-id ~/fix-monitor-layout.sh # TODO: make this script exist in the repo, clear it and .gitignore it later and add instructions to customize it

@@ -1,7 +1,5 @@
 #!/usr/bin/env sh
 
-echo "polybar script ran just now" >> /tmp/foobar
-
 # Prefer polybar if available
 if command -v polybar >/dev/null 2>&1; then
   pkill polybar
