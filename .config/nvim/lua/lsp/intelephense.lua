@@ -1,4 +1,11 @@
 return {
+  settings = {
+    intelephense = {
+      format = {
+        braces = 'k&r',
+      },
+    },
+  },
   -- Try UTF-8 encoding (Intelephense may not follow LSP spec default)
   offset_encoding = 'utf-8',
   on_attach = function(client)
