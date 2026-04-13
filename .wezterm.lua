@@ -6,7 +6,7 @@ config.color_scheme = "iTerm2 Dark Background"
 
 -- config.font = wezterm.font("Hack Nerd Font Mono")
 config.font = wezterm.font("CaskaydiaMono Nerd Font Mono")
-config.window_background_opacity = 0.8
+-- config.window_background_opacity = 0.8
 -- config.colors = theme.colors()
 config.enable_tab_bar = false
 
