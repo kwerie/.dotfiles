@@ -19,8 +19,8 @@ vim.opt.showmode = false
 -- Enable editorconfig
 vim.g.editorconfig = false
 
-vim.o.title = true
-vim.o.titlestring = '%t — %F'
+vim.opt.title = true
+vim.opt.titlestring = '%t%( %M%)%( (%{expand("%:~:h")})%)%a (nvim)'
 
 -- Cursor configuration
 vim.o.guicursor = 'n-v-c-sm:block,i-ci-ve:block,r-cr-o:hor20'
@@ -56,7 +56,7 @@ vim.opt.splitbelow = true
 
 -- Sets how neovim will display certain whitespace characters in the editor.
 vim.opt.list = true
-vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
+vim.opt.listchars = { tab = '» ', trail = '·', space = '·', nbsp = '␣' }
 
 -- Preview substitutions live, as you type!
 vim.opt.inccommand = 'split'
@@ -69,3 +69,5 @@ vim.opt.scrolloff = 10
 
 -- Copilot configuration
 vim.g.ai_cmp = false -- Has to be set to false in order to use GitHub Copilot
+
+vim.opt.formatoptions:remove 'o'
