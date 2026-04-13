@@ -9,6 +9,7 @@
 general {
         colors = true
         interval = 2
+        separator = " | "
 }
 
 order += "cpu_temperature 1"
