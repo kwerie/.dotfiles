@@ -117,6 +117,9 @@ function M.setup()
     yamlls = require 'lsp.yamlls',
     clangd = {},
     roslyn = {},
+    emmet_language_server = {
+      -- filetypes = { 'html', 'css', 'javascript', 'typescript', 'jsx', 'tsx' },
+    },
   }
 
   -- Setup Mason
