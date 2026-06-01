@@ -44,3 +44,11 @@ end, { desc = 'Update (add + organize) TypeScript imports' })
 
 vim.keymap.set('n', '<leader>c', '<cmd>Compile<CR>')
 vim.keymap.set('n', '<leader>rc', '<cmd>Recompile<CR>')
+
+vim.keymap.set('x', 'p', [["_dP]], { desc = 'Paste over selection without losing yanked text' })
+
+vim.keymap.set('v', 'J', ":m '>+1<CR>gv=gv", { desc = 'moves lines down in visual selection' })
+vim.keymap.set('v', 'K', ":m '<-2<CR>gv=gv", { desc = 'moves lines up in visual selection' })
+
+vim.keymap.set('v', '<', '<gv', { desc = 'Unindent and keep selection' })
+vim.keymap.set('v', '>', '>gv', { desc = 'Indent and keep selection' })

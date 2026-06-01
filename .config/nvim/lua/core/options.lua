@@ -23,7 +23,7 @@ vim.opt.title = true
 vim.opt.titlestring = '%t%( %M%)%( (%{expand("%:~:h")})%)%a (nvim)'
 
 -- Cursor configuration
-vim.o.guicursor = 'n-v-c-sm:block,i-ci-ve:block,r-cr-o:hor20'
+vim.opt.guicursor = 'n-v-c-sm:block,i-ci-ve:block,r-cr-o:hor20'
 
 -- Sync clipboard between OS and Neovim.
 -- Schedule the setting after `UiEnter` because it can increase startup-time.
@@ -40,7 +40,9 @@ vim.opt.undofile = true
 -- Case-insensitive searching UNLESS \C or one or more capital letters in the search term
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
+vim.opt.smartindent = true
 
+vim.opt.colorcolumn = '0'
 -- Keep signcolumn on by default
 vim.opt.signcolumn = 'yes'
 
@@ -53,6 +55,7 @@ vim.opt.timeoutlen = 300
 -- Configure how new splits should be opened
 vim.opt.splitright = true
 vim.opt.splitbelow = true
+vim.opt.laststatus = 3
 
 -- Sets how neovim will display certain whitespace characters in the editor.
 vim.opt.list = true
@@ -71,3 +74,4 @@ vim.opt.scrolloff = 10
 vim.g.ai_cmp = false -- Has to be set to false in order to use GitHub Copilot
 
 vim.opt.formatoptions:remove 'o'
+vim.opt.cmdheight = 0
