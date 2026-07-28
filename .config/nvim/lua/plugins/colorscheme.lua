@@ -1,5 +1,6 @@
 function SetColorScheme()
   vim.cmd 'colorscheme gruber-darker'
+  -- vim.cmd 'colorscheme gruvbox'
 end
 
 return {
@@ -72,8 +73,10 @@ return {
   },
   {
     'kwerie/gruber-darker.nvim',
+    dir = '~/Projects/kwerie/gruber-darker-2.nvim/',
     name = 'gruber-darker',
     opts = {
+      transparency = true,
       italic = {
         strings = false,
         comments = true,

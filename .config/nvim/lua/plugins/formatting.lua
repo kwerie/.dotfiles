@@ -36,6 +36,9 @@ return {
         javascript = { 'prettierd', 'prettier', stop_after_first = true },
         typescript = { 'prettierd', 'prettier', stop_after_first = true },
         json = { 'prettierd', 'prettier' },
+        css = { 'prettierd', 'prettier', stop_after_first = true },
+        scss = { 'prettierd', 'prettier', stop_after_first = true },
+        less = { 'prettierd', 'prettier', stop_after_first = true },
         -- Each php formatter is gated on its config file (see `formatters` below).
         -- If neither matches, both are skipped and lsp_format='fallback' runs intelephense.
         php = { 'php_cs_fixer', 'phpcbf', stop_after_first = true },

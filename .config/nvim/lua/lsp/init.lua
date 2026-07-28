@@ -120,6 +120,8 @@ function M.setup()
     emmet_language_server = {
       -- filetypes = { 'html', 'css', 'javascript', 'typescript', 'jsx', 'tsx' },
     },
+    cssls = require 'lsp.css',
+    tailwindcss = require 'lsp.tailwindcss_ls',
   }
 
   -- Setup Mason

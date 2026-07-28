@@ -28,15 +28,27 @@ return {
         'gotmpl',
         'dockerfile',
         'twig',
+        'glimmer',
       }
       require('nvim-treesitter').install(parsers)
+
+      -- Languages whose treesitter indent queries are missing/incomplete on the
+      -- `main` branch. Neovim's built-in indent files (runtime/indent/*.vim) do a
+      -- better job, so we keep treesitter highlighting but leave indentexpr alone.
+      local indentexpr_blocklist = {
+        css = true,
+        scss = true,
+        less = true,
+      }
 
       local function treesitter_try_attach(buf, language)
         if not vim.treesitter.language.add(language) then
           return
         end
         vim.treesitter.start(buf, language)
-        vim.bo[buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+        if not indentexpr_blocklist[language] then
+          vim.bo[buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+        end
       end
 
       local available_parsers = require('nvim-treesitter').get_available()
