@@ -74,4 +74,4 @@ vim.opt.scrolloff = 10
 vim.g.ai_cmp = false -- Has to be set to false in order to use GitHub Copilot
 
 vim.opt.formatoptions:remove 'o'
-vim.opt.cmdheight = 0
+-- vim.opt.cmdheight = 0
