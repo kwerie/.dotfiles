@@ -24,8 +24,6 @@ hl.monitor({
 	scale = "auto",
 })
 
-require("monitors")
-
 ---------------------
 ---- MY PROGRAMS ----
 ---------------------
@@ -208,6 +206,14 @@ hl.config({
 	},
 })
 
+-- hl.config({
+-- 	plugin = {
+-- 		hyprcapture = {
+-- 			helper = "/home/rico/.local/bin/hyprcapture-ui",
+-- 		},
+-- 	},
+-- })
+
 -----------------
 ----  BINDS  ----
 -----------------
@@ -224,10 +230,10 @@ hl.config({
 
 hl.config({
 	input = {
-		kb_layout = "us",
-		kb_variant = "",
+		kb_layout = "us,us",
+		kb_variant = ",intl",
 		kb_model = "",
-		kb_options = "",
+		kb_options = "grp:alt_shift_toggle",
 		kb_rules = "",
 
 		follow_mouse = 1,
@@ -262,7 +268,8 @@ local mainMod = "SUPER" -- Sets "Windows" key as main modifier
 -- Example binds, see https://wiki.hypr.land/Configuring/Basics/Binds/ for more
 hl.bind(mainMod .. " + RETURN", hl.dsp.exec_cmd(terminal))
 -- Kill the process owning the window with a SIGKILL
-hl.bind(mainMod .. " + SHIFT + Q", hl.dsp.window.kill())
+local killBind = hl.bind(mainMod .. " + SHIFT + Q", hl.dsp.window.kill())
+killBind:set_enabled(false)
 -- Send a graceful request to close the window
 local closeWindowBind = hl.bind(mainMod .. " + C", hl.dsp.window.close())
 -- closeWindowBind:set_enabled(false)
@@ -272,7 +279,7 @@ hl.bind(
 )
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
 hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
-hl.bind(mainMod .. " + R", hl.dsp.exec_cmd(ipc .. "panel-toggle launcher"))
+hl.bind(mainMod .. " + SPACE", hl.dsp.exec_cmd(ipc .. "panel-toggle launcher"))
 hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
 hl.bind(mainMod .. " + J", hl.dsp.layout("togglesplit")) -- dwindle only
 
@@ -281,6 +288,12 @@ hl.bind(mainMod .. " + left", hl.dsp.focus({ direction = "left" }))
 hl.bind(mainMod .. " + right", hl.dsp.focus({ direction = "right" }))
 hl.bind(mainMod .. " + up", hl.dsp.focus({ direction = "up" }))
 hl.bind(mainMod .. " + down", hl.dsp.focus({ direction = "down" }))
+
+-- Move focus with mainMod + vim keys
+hl.bind(mainMod .. " + h", hl.dsp.focus({ direction = "left" }))
+hl.bind(mainMod .. " + l", hl.dsp.focus({ direction = "right" }))
+hl.bind(mainMod .. " + k", hl.dsp.focus({ direction = "up" }))
+hl.bind(mainMod .. " + j", hl.dsp.focus({ direction = "down" }))
 
 -- Resize windows
 local resizeUnit = 20
@@ -417,3 +430,13 @@ hl.window_rule({
 	move = "20 monitor_h-120",
 	float = true,
 })
+
+-- Added by hyprmoncfg: its generated monitor rules load last, so nothing before this can override the applied layout.
+do
+	local path = os.getenv("HOME") .. "/.config/hypr/hyprmoncfg-monitors.lua"
+	local file = io.open(path, "r")
+	if file then
+		file:close()
+		dofile(path)
+	end
+end
