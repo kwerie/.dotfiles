@@ -42,12 +42,31 @@ alias dps "docker ps --format 'table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Image}
 alias dcl "docker compose logs -f"
 alias dive "docker run -ti --rm  -v /var/run/docker.sock:/var/run/docker.sock wagoodman/dive"
 alias trivy-scan "docker run --rm  -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy image"
+
 function ngrok-serve
 	if test -z "$NGROK_TOKEN"; or test -z "$NGROK_URL"
 		echo "Please set NGROK_AUTHTOKEN and NGROK_URL environment variables."
 		return 1
 	end
 
-	docker run --net=host -it -e NGROK_AUTHTOKEN="$NGROK_TOKEN" ngrok/ngrok http 80 --url="$NGROK_URL"
+	set port 80
+
+	if test (count $argv) -gt 0
+		set port $argv[1]
+	end
+
+	set token (echo "$NGROK_TOKEN" | tr -d '"')
+
+	if test (count $argv) -gt 1
+		set token $argv[2]
+	end
+
+	set url (echo "$NGROK_URL" | tr -d '"')
+	
+	if test (count $argv) -gt 2
+		set url $argv[3]
+	end
+
+	docker run --net=host -it -e NGROK_AUTHTOKEN="$token" ngrok/ngrok http "$port" --url="$url"
 end
 # alias ngrok-serve "docker run --net=host -it -e NGROK_AUTHTOKEN=<REPLACEME> ngrok/ngrok http 80 --url=<REPLACEME>"
