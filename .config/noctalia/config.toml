@@ -152,4 +152,8 @@ path = "/home/rico/Pictures/windows-xp-penger.jpg"
 timezone = "Europe/Amsterdam"
 
 [notification]
-monitors = ["eDP-1", "DP-11"]
+monitors = ["eDP-1", "0x0000D415"]
+
+[theme]
+mode = "dark"
+shell_mode = "follow"

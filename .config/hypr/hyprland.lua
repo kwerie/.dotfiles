@@ -295,6 +295,42 @@ hl.bind(mainMod .. " + l", hl.dsp.focus({ direction = "right" }))
 hl.bind(mainMod .. " + k", hl.dsp.focus({ direction = "up" }))
 hl.bind(mainMod .. " + j", hl.dsp.focus({ direction = "down" }))
 
+-- Groups
+hl.bind(mainMod .. " + G", hl.dsp.group.toggle())
+
+-- Window movements
+hl.bind(
+	mainMod .. " + SHIFT + H",
+	hl.dsp.window.move({
+		direction = "left",
+		group_aware = true,
+	})
+)
+
+hl.bind(
+	mainMod .. " + SHIFT + J",
+	hl.dsp.window.move({
+		direction = "down",
+		group_aware = true,
+	})
+)
+
+hl.bind(
+	mainMod .. " + SHIFT + K",
+	hl.dsp.window.move({
+		direction = "up",
+		group_aware = true,
+	})
+)
+
+hl.bind(
+	mainMod .. " + SHIFT + L",
+	hl.dsp.window.move({
+		direction = "right",
+		group_aware = true,
+	})
+)
+
 -- Resize windows
 local resizeUnit = 20
 hl.bind(
@@ -337,11 +373,11 @@ hl.bind(mainMod .. " + SHIFT + F", hl.dsp.window.fullscreen({ mode = "fullscreen
 -- Screenshot a monitor
 hl.bind("PRINT", hl.dsp.exec_cmd(ipc .. "screenshot-fullscreen pick"))
 -- Screenshot a region
-hl.bind(mainMod .. " +  PRINT", hl.dsp.exec_cmd(ipc .. "screenshot-region"))
+hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd(ipc .. "screenshot-region"))
 
 -- Example special workspace (scratchpad)
-hl.bind(mainMod .. " + S", hl.dsp.workspace.toggle_special("magic"))
-hl.bind(mainMod .. " + SHIFT + S", hl.dsp.window.move({ workspace = "special:magic" }))
+-- hl.bind(mainMod .. " + S", hl.dsp.workspace.toggle_special("magic"))
+-- hl.bind(mainMod .. " + SHIFT + S", hl.dsp.window.move({ workspace = "special:magic" }))
 
 -- Scroll through existing workspaces with mainMod + scroll
 hl.bind(mainMod .. " + mouse_down", hl.dsp.focus({ workspace = "e+1" }))
@@ -430,6 +466,36 @@ hl.window_rule({
 	move = "20 monitor_h-120",
 	float = true,
 })
+
+do
+	local path = os.getenv("HOME") .. "/.config/hypr/hyprmoncfg-monitors.lua"
+	local file = io.open(path, "r")
+	if file then
+		file:close()
+		dofile(path)
+	end
+end
+
+-- For Noctalia Color templates
+require("noctalia").apply_theme()
+
+do
+	local path = os.getenv("HOME") .. "/.config/hypr/hyprmoncfg-monitors.lua"
+	local file = io.open(path, "r")
+	if file then
+		file:close()
+		dofile(path)
+	end
+end
+
+do
+	local path = os.getenv("HOME") .. "/.config/hypr/hyprmoncfg-monitors.lua"
+	local file = io.open(path, "r")
+	if file then
+		file:close()
+		dofile(path)
+	end
+end
 
 -- Added by hyprmoncfg: its generated monitor rules load last, so nothing before this can override the applied layout.
 do
