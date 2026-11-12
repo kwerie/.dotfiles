@@ -7,6 +7,7 @@ radius_top_right = 0
 radius_bottom_left = 0
 radius_bottom_right = 0
 
+
 [lockscreen_widgets]
 enabled = false
 schema_version = 2
@@ -152,7 +153,7 @@ path = "/home/rico/Pictures/windows-xp-penger.jpg"
 timezone = "Europe/Amsterdam"
 
 [notification]
-monitors = ["eDP-1", "0x0000D415"]
+monitors = ["eDP-1", "0x0000D415", "0x1161961F"]
 
 [theme]
 mode = "dark"
