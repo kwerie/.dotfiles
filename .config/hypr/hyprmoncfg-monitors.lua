@@ -3,7 +3,7 @@
 hl.monitor({
   output = "desc:Philips Consumer Electronics Company PHL 245E1 0x0000D3C6",
   mode = "2560x1440@74.97",
-  position = "6906x0",
+  position = "6848x0",
   scale = 1,
   sdr_min_luminance = 0.2,
   sdr_max_luminance = 80,
