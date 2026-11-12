@@ -11,7 +11,7 @@ config.color_scheme = "iTerm2 Dark Background"
 local IosevkaNf = wezterm.font({
 	-- family = "Iosevka Nerd Font Mono",
 	family = "IosevkaTerm Nerd Font Mono",
-	-- harfbuzz_features = { "calt=0", "liga=0", "dlig=0" },
+	harfbuzz_features = { "calt=0", "liga=0", "dlig=0" },
 })
 
 config.font = IosevkaNf
