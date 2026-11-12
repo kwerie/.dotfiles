@@ -19,7 +19,7 @@ alias wn1 "watch -n 1"
 alias yeet "rm -rf"
 #alias cat "batcat -p"
 #alias bat "batcat"
-alias cpy 'xclip -selection clipboard'
+alias cpy 'wl-copy'
 
 alias jrny "bin/jrny"
 #alias proj "cd ~/Projects"
