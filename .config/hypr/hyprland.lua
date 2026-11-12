@@ -289,10 +289,9 @@ local mainMod = "SUPER" -- Sets "Windows" key as main modifier
 -- Example binds, see https://wiki.hypr.land/Configuring/Basics/Binds/ for more
 hl.bind(mainMod .. " + RETURN", hl.dsp.exec_cmd(terminal))
 -- Kill the process owning the window with a SIGKILL
-local killBind = hl.bind(mainMod .. " + SHIFT + Q", hl.dsp.window.kill())
-killBind:set_enabled(false)
+hl.bind(mainMod .. " + SHIFT + Q", hl.dsp.window.kill())
 -- Send a graceful request to close the window
-local closeWindowBind = hl.bind(mainMod .. " + C", hl.dsp.window.close())
+hl.bind(mainMod .. " + C", hl.dsp.window.close())
 -- closeWindowBind:set_enabled(false)
 hl.bind(
 	mainMod .. " + M",
