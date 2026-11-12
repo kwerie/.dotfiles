@@ -39,6 +39,7 @@ return {
         css = true,
         scss = true,
         less = true,
+        c_sharp = true,
       }
 
       local function treesitter_try_attach(buf, language)
